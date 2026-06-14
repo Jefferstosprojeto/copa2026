@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0a4d2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mundial 2026">
+<meta property="og:title" content="⚽ Copa do Mundo 2026 – Horário de Portugal">
+<meta property="og:description" content="Calendário completo da Copa 2026 com horários em Portugal, resultados ao vivo e destaques de Brasil 🇧🇷 e Portugal 🇵🇹. Atualizado a cada 2h.">
+<meta property="og:type" content="website">
+<title>Copa do Mundo 2026 – Hora de Portugal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+:root{
+  --verde:#0a4d2e;--v2:#0d6b40;--v3:#1a9458;
+  --ouro:#c9a227;--bg:#141414;--bg2:#1e1e1e;--bg3:#242424;
+  --br:#009c3b;--br2:#ffdf00;--pt:#c8102e;--pt2:#006600;
+  --txt:#e8e8e2;--mu:#555;--mu2:#888;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.3)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+header{position:relative;background:var(--verde);overflow:hidden;padding:34px 20px 26px;text-align:center}
+.fsvg{position:absolute;inset:0;width:100%;height:100%;opacity:.07;pointer-events:none}
+.htag{display:inline-block;background:var(--ouro);color:#111;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:3px 14px;border-radius:2px;margin-bottom:12px}
+h1{font-family:'Bebas Neue',cursive;font-size:clamp(40px,9vw,74px);letter-spacing:4px;color:#fff;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,.5)}
+h1 em{color:var(--ouro);font-style:normal}
+.sub{margin-top:8px;font-size:12px;color:rgba(255,255,255,.5);letter-spacing:1px}
+
+/* STATUS */
+#sb{background:#0d0d0d;border-bottom:1px solid #1e1e1e;padding:9px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+#sa{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu2)}
+.dot{width:8px;height:8px;border-radius:50%;background:#333;flex-shrink:0;transition:background .3s}
+.dot.ok{background:#2ecc71;animation:pulse 2s infinite}
+.dot.er{background:#e74c3c}
+.dot.ld{background:var(--ouro);animation:pulse .7s infinite}
+#br{background:var(--v2);color:#fff;border:none;border-radius:4px;padding:5px 16px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s}
+#br:hover{background:var(--v3)}
+#br:disabled{background:#1e1e1e;color:#444;cursor:not-allowed}
+#sp{display:none}
+#sp.on{display:inline-block;animation:spin .8s linear infinite}
+
+/* FILTROS */
+#fi{background:#161616;border-bottom:1px solid #1e1e1e;padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap}
+.fb{background:#202020;border:1px solid #2a2a2a;color:var(--mu2);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.fb:hover,.fb.on{background:var(--ouro);border-color:var(--ouro);color:#111;font-weight:700}
+.fb.fB.on{background:var(--br);border-color:var(--br2);color:#fff}
+.fb.fP.on{background:var(--pt);border-color:var(--pt2);color:#fff}
+
+/* MAIN */
+#main{max-width:920px;margin:0 auto;padding:0 14px 60px}
+.ps{margin:30px 0 6px;display:flex;align-items:center;gap:12px}
+.pl{font-family:'Bebas Neue',cursive;font-size:12px;letter-spacing:3px;color:var(--v3);white-space:nowrap}
+.pln{flex:1;height:1px;background:#1a2e20}
+.db{margin-top:20px}
+.dh{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.dl{font-family:'Bebas Neue',cursive;font-size:20px;letter-spacing:1px;color:var(--ouro)}
+.dln{flex:1;height:1px;background:#222}
+.dc{font-size:11px;color:var(--mu)}
+
+/* CARD */
+.card{background:var(--bg3);border:1px solid #282828;border-radius:8px;margin-bottom:8px;overflow:hidden;position:relative;transition:border-color .2s}
+.card:hover{border-color:#3a3a3a}
+.card.cB{border-color:var(--br);box-shadow:0 0 0 1px var(--br),0 4px 18px rgba(0,156,59,.14)}
+.card.cP{border-color:var(--pt);box-shadow:0 0 0 1px var(--pt),0 4px 18px rgba(200,16,46,.14)}
+.card.cL{border-color:#2ecc71;box-shadow:0 0 0 1px #2ecc71,0 4px 18px rgba(46,204,113,.18)}
+.card.cF{opacity:.73}
+.card.cB::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--br),var(--br2))}
+.card.cP::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--pt),var(--pt2))}
+.pill{position:absolute;top:6px;right:8px;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;text-transform:uppercase}
+.cB .pill{background:var(--br);color:#fff}
+.cP .pill{background:var(--pt);color:#fff}
+.ci{display:grid;grid-template-columns:76px 1fr auto;align-items:center;padding:12px 16px 12px 20px;gap:12px}
+.ct{text-align:center}
+.ch{font-family:'Bebas Neue',cursive;font-size:26px;color:#fff;line-height:1}
+.cg{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--ouro);display:block;margin-top:2px}
+.s0{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 6px;border-radius:3px;margin-top:4px;text-transform:uppercase}
+.s0.lv{background:#2ecc71;color:#000;animation:pulse 1.5s infinite}
+.s0.fm{background:#2a2a2a;color:#666}
+.s0.ag{background:#1a1a1a;color:#444}
+.tm{display:flex;align-items:center}
+.t{display:flex;flex-direction:column;align-items:center;width:96px;text-align:center}
+.fl{font-size:26px;line-height:1}
+.tn{font-size:11px;font-weight:500;letter-spacing:.5px;color:#aaa;margin-top:4px;text-transform:uppercase}
+.t.hl .tn{color:#fff;font-weight:700}
+.sc{display:flex;align-items:center;gap:4px;min-width:80px;justify-content:center}
+.sd{font-family:'Bebas Neue',cursive;font-size:32px;color:#fff;width:26px;text-align:center;line-height:1}
+.ss{font-family:'Bebas Neue',cursive;font-size:22px;color:#3a3a3a}
+.sv{font-family:'Bebas Neue',cursive;font-size:18px;color:#2a2a2a;letter-spacing:2px;min-width:80px;text-align:center}
+.vn{font-size:10px;color:#444;text-align:right;min-width:80px;line-height:1.5}
+.vp{color:#555;font-size:11px;font-weight:600;display:block;margin-bottom:2px}
+.empty{text-align:center;color:#3a3a3a;padding:60px 20px;font-size:14px}
+
+/* LOG API */
+#apiLog{background:#0a0a0a;border-top:1px solid #1a1a1a;padding:10px 18px;font-size:11px;color:#444;font-family:monospace;max-height:90px;overflow-y:auto}
+#apiLog div{padding:1px 0}
+#apiLog div.ok{color:#2ecc71}
+#apiLog div.er{color:#e74c3c}
+#apiLog div.ld{color:var(--ouro)}
+
+footer{text-align:center;padding:16px;font-size:11px;color:#2a2a2a;border-top:1px solid #181818}
+footer span{color:#333}
+/* Mobile touch improvements */
+button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#fi{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;padding:10px 16px}
+#fi::-webkit-scrollbar{display:none}
+.fb{flex-shrink:0}
+/* WhatsApp FAB */
+#wabtn{
+  position:fixed;bottom:22px;right:18px;z-index:50;
+  background:#25D366;color:#fff;border:none;border-radius:50px;
+  padding:12px 18px;font-size:14px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 4px 20px rgba(37,211,102,.5);
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
+  text-decoration:none;
+}
+#wabtn:hover{transform:scale(1.05);box-shadow:0 6px 24px rgba(37,211,102,.65)}
+#wabtn svg{flex-shrink:0}
+@media(max-width:580px){
+  .ci{grid-template-columns:60px 1fr}
+  .vn{display:none}
+  .t{width:72px}
+  .fl{font-size:22px}
+  .sd{font-size:28px}
+  .ch{font-size:22px}
+  .cg{font-size:8px}
+  .s0{font-size:8px}
+  .pill{font-size:8px;padding:2px 6px;top:4px;right:6px}
+  #main{padding:0 10px 80px}
+  .dl{font-size:17px}
+  h1{font-size:clamp(36px,10vw,60px)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <svg class="fsvg" viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg">
+    <rect x="40" y="14" width="720" height="152" fill="none" stroke="white" stroke-width="3"/>
+    <line x1="400" y1="14" x2="400" y2="166" stroke="white" stroke-width="2"/>
+    <circle cx="400" cy="90" r="40" fill="none" stroke="white" stroke-width="2"/>
+    <rect x="40" y="50" width="80" height="80" fill="none" stroke="white" stroke-width="2"/>
+    <rect x="680" y="50" width="80" height="80" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="400" cy="90" r="3" fill="white"/>
+  </svg>
+  <div class="htag">&#9917; FIFA WORLD CUP 2026</div>
+  <h1>MUNDIAL <em>2026</em></h1>
+  <p class="sub">Hora de Portugal (WEST &middot; UTC+1) &nbsp;&middot;&nbsp; 11 Jun &ndash; 19 Jul &nbsp;&middot;&nbsp; 104 jogos</p>
+</header>
+
+<div id="sb">
+  <div id="sa"><div class="dot ld" id="dot"></div><span id="sm">A iniciar...</span></div>
+  <button id="br" onclick="doRefresh()">
+    <svg id="sp" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+    &#8635; Atualizar
+  </button>
+</div>
+
+<div id="fi">
+  <button class="fb on"  onclick="setF('all',this)">Todos</button>
+  <button class="fb"     onclick="setF('today',this)">&#128205; Hoje</button>
+  <button class="fb fB"  onclick="setF('br',this)">&#127463;&#127479; Brasil</button>
+  <button class="fb fP"  onclick="setF('pt',this)">&#127477;&#127481; Portugal</button>
+  <button class="fb"     onclick="setF('gp',this)">Fase de Grupos</button>
+  <button class="fb"     onclick="setF('mm',this)">&#127942; Mata-Mata</button>
+</div>
+
+<div id="main"><div class="empty">A carregar...</div></div>
+<div id="apiLog"></div>
+<footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; APIs: <span>worldcup26.ir &rarr; TheSportsDB (key:123) &rarr; Sofascore</span> &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
+
+<script>
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DADOS: 104 jogos – horário Portugal (UTC+1)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+const M=[
+  {id:1, d:"2026-06-11",t:"20:00",g:"A",h:"México",        hf:"🇲🇽",a:"África do Sul", af:"🇿🇦",v:"Cidade do México",p:"G"},
+  {id:2, d:"2026-06-12",t:"03:00",g:"A",h:"Coreia do Sul", hf:"🇰🇷",a:"Rep. Checa",    af:"🇨🇿",v:"Guadalajara",    p:"G"},
+  {id:3, d:"2026-06-12",t:"20:00",g:"B",h:"Canadá",        hf:"🇨🇦",a:"Bósnia-Herz.",  af:"🇧🇦",v:"Toronto",        p:"G"},
+  {id:4, d:"2026-06-13",t:"02:00",g:"D",h:"EUA",           hf:"🇺🇸",a:"Paraguai",      af:"🇵🇾",v:"Los Angeles",    p:"G"},
+  {id:5, d:"2026-06-13",t:"20:00",g:"B",h:"Qatar",         hf:"🇶🇦",a:"Suíça",         af:"🇨🇭",v:"San Francisco",  p:"G"},
+  {id:6, d:"2026-06-13",t:"23:00",g:"C",h:"Brasil",        hf:"🇧🇷",a:"Marrocos",      af:"🇲🇦",v:"Nova York/NJ",   p:"G",hl:"br"},
+  {id:7, d:"2026-06-14",t:"02:00",g:"C",h:"Haiti",         hf:"🇭🇹",a:"Escócia",       af:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",v:"Boston",         p:"G"},
+  {id:8, d:"2026-06-14",t:"05:00",g:"D",h:"Austrália",     hf:"🇦🇺",a:"Turquia",       af:"🇹🇷",v:"Vancouver",      p:"G"},
+  {id:9, d:"2026-06-14",t:"18:00",g:"E",h:"Alemanha",      hf:"🇩🇪",a:"Curaçao",       af:"🇨🇼",v:"Houston",        p:"G"},
+  {id:10,d:"2026-06-14",t:"21:00",g:"F",h:"Países Baixos", hf:"🇳🇱",a:"Japão",         af:"🇯🇵",v:"Dallas",         p:"G"},
+  {id:11,d:"2026-06-15",t:"00:00",g:"E",h:"Costa do Marfim",hf:"🇨🇮",a:"Equador",      af:"🇪🇨",v:"Filadélfia",    p:"G"},
+  {id:12,d:"2026-06-15",t:"03:00",g:"F",h:"Suécia",        hf:"🇸🇪",a:"Tunísia",       af:"🇹🇳",v:"Monterrey",      p:"G"},
+  {id:13,d:"2026-06-15",t:"17:00",g:"H",h:"Espanha",       hf:"🇪🇸",a:"Cabo Verde",    af:"🇨🇻",v:"Atlanta",        p:"G"},
+  {id:14,d:"2026-06-15",t:"20:00",g:"G",h:"Bélgica",       hf:"🇧🇪",a:"Egito",         af:"🇪🇬",v:"Seattle",        p:"G"},
+  {id:15,d:"2026-06-15",t:"23:00",g:"H",h:"Arábia Saudita",hf:"🇸🇦",a:"Uruguai",      af:"🇺🇾",v:"Miami",          p:"G"},
+  {id:16,d:"2026-06-16",t:"02:00",g:"G",h:"Irã",           hf:"🇮🇷",a:"Nova Zelândia", af:"🇳🇿",v:"Los Angeles",    p:"G"},
+  {id:17,d:"2026-06-16",t:"20:00",g:"I",h:"França",        hf:"🇫🇷",a:"Senegal",       af:"🇸🇳",v:"Nova York/NJ",   p:"G"},
+  {id:18,d:"2026-06-16",t:"23:00",g:"I",h:"Iraque",        hf:"🇮🇶",a:"Noruega",       af:"🇳🇴",v:"Boston",         p:"G"},
+  {id:19,d:"2026-06-17",t:"02:00",g:"J",h:"Argentina",     hf:"🇦🇷",a:"Argélia",       af:"🇩🇿",v:"Kansas City",    p:"G"},
+  {id:20,d:"2026-06-17",t:"05:00",g:"J",h:"Áustria",       hf:"🇦🇹",a:"Jordânia",      af:"🇯🇴",v:"San Francisco",  p:"G"},
+  {id:21,d:"2026-06-17",t:"18:00",g:"K",h:"Portugal",      hf:"🇵🇹",a:"Congo RD",      af:"🇨🇩",v:"Houston",        p:"G",hl:"pt"},
+  {id:22,d:"2026-06-17",t:"21:00",g:"L",h:"Inglaterra",    hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",a:"Croácia",    af:"🇭🇷",v:"Dallas",         p:"G"},
+  {id:23,d:"2026-06-18",t:"00:00",g:"L",h:"Gana",          hf:"🇬🇭",a:"Panamá",        af:"🇵🇦",v:"Toronto",        p:"G"},
+  {id:24,d:"2026-06-18",t:"03:00",g:"K",h:"Uzbequistão",   hf:"🇺🇿",a:"Colômbia",      af:"🇨🇴",v:"Cidade do México",p:"G"},
+  {id:25,d:"2026-06-18",t:"17:00",g:"A",h:"Rep. Checa",    hf:"🇨🇿",a:"África do Sul", af:"🇿🇦",v:"Atlanta",        p:"G"},
+  {id:26,d:"2026-06-18",t:"20:00",g:"B",h:"Suíça",         hf:"🇨🇭",a:"Bósnia-Herz.",  af:"🇧🇦",v:"Los Angeles",    p:"G"},
+  {id:27,d:"2026-06-18",t:"23:00",g:"B",h:"Canadá",        hf:"🇨🇦",a:"Qatar",         af:"🇶🇦",v:"Vancouver",      p:"G"},
+  {id:28,d:"2026-06-19",t:"02:00",g:"A",h:"México",        hf:"🇲🇽",a:"Coreia do Sul", af:"🇰🇷",v:"Guadalajara",    p:"G"},
+  {id:29,d:"2026-06-19",t:"20:00",g:"D",h:"EUA",           hf:"🇺🇸",a:"Austrália",     af:"🇦🇺",v:"Seattle",        p:"G"},
+  {id:30,d:"2026-06-19",t:"20:00",g:"C",h:"Escócia",       hf:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",a:"Marrocos",  af:"🇲🇦",v:"Boston",         p:"G"},
+  {id:31,d:"2026-06-20",t:"02:30",g:"C",h:"Brasil",        hf:"🇧🇷",a:"Haiti",         af:"🇭🇹",v:"Filadélfia",    p:"G",hl:"br"},
+  {id:32,d:"2026-06-20",t:"05:00",g:"D",h:"Turquia",       hf:"🇹🇷",a:"Paraguai",      af:"🇵🇾",v:"San Francisco",  p:"G"},
+  {id:33,d:"2026-06-20",t:"18:00",g:"F",h:"Países Baixos", hf:"🇳🇱",a:"Suécia",        af:"🇸🇪",v:"Houston",        p:"G"},
+  {id:34,d:"2026-06-20",t:"21:00",g:"E",h:"Alemanha",      hf:"🇩🇪",a:"Costa do Marfim",af:"🇨🇮",v:"Toronto",       p:"G"},
+  {id:35,d:"2026-06-21",t:"01:00",g:"E",h:"Equador",       hf:"🇪🇨",a:"Curaçao",       af:"🇨🇼",v:"Kansas City",    p:"G"},
+  {id:36,d:"2026-06-21",t:"05:00",g:"F",h:"Tunísia",       hf:"🇹🇳",a:"Japão",         af:"🇯🇵",v:"Monterrey",      p:"G"},
+  {id:37,d:"2026-06-21",t:"17:00",g:"H",h:"Espanha",       hf:"🇪🇸",a:"Arábia Saudita",af:"🇸🇦",v:"Atlanta",       p:"G"},
+  {id:38,d:"2026-06-21",t:"20:00",g:"G",h:"Bélgica",       hf:"🇧🇪",a:"Irã",           af:"🇮🇷",v:"Los Angeles",    p:"G"},
+  {id:39,d:"2026-06-21",t:"23:00",g:"H",h:"Uruguai",       hf:"🇺🇾",a:"Cabo Verde",    af:"🇨🇻",v:"Miami",          p:"G"},
+  {id:40,d:"2026-06-22",t:"02:00",g:"G",h:"Nova Zelândia", hf:"🇳🇿",a:"Egito",         af:"🇪🇬",v:"Vancouver",      p:"G"},
+  {id:41,d:"2026-06-22",t:"18:00",g:"J",h:"Argentina",     hf:"🇦🇷",a:"Áustria",       af:"🇦🇹",v:"Dallas",         p:"G"},
+  {id:42,d:"2026-06-22",t:"22:00",g:"I",h:"França",        hf:"🇫🇷",a:"Iraque",        af:"🇮🇶",v:"Filadélfia",    p:"G"},
+  {id:43,d:"2026-06-23",t:"01:00",g:"I",h:"Noruega",       hf:"🇳🇴",a:"Senegal",       af:"🇸🇳",v:"Nova York/NJ",   p:"G"},
+  {id:44,d:"2026-06-23",t:"04:00",g:"J",h:"Jordânia",      hf:"🇯🇴",a:"Argélia",       af:"🇩🇿",v:"San Francisco",  p:"G"},
+  {id:45,d:"2026-06-23",t:"18:00",g:"K",h:"Portugal",      hf:"🇵🇹",a:"Uzbequistão",   af:"🇺🇿",v:"Houston",        p:"G",hl:"pt"},
+  {id:46,d:"2026-06-23",t:"21:00",g:"L",h:"Inglaterra",    hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",a:"Gana",      af:"🇬🇭",v:"Boston",         p:"G"},
+  {id:47,d:"2026-06-24",t:"00:00",g:"L",h:"Panamá",        hf:"🇵🇦",a:"Croácia",       af:"🇭🇷",v:"Toronto",        p:"G"},
+  {id:48,d:"2026-06-24",t:"03:00",g:"K",h:"Colômbia",      hf:"🇨🇴",a:"Congo RD",      af:"🇨🇩",v:"Guadalajara",    p:"G"},
+  {id:49,d:"2026-06-24",t:"20:00",g:"B",h:"Suíça",         hf:"🇨🇭",a:"Canadá",        af:"🇨🇦",v:"Vancouver",      p:"G"},
+  {id:50,d:"2026-06-24",t:"20:00",g:"B",h:"Bósnia-Herz.",  hf:"🇧🇦",a:"Qatar",         af:"🇶🇦",v:"Seattle",        p:"G"},
+  {id:51,d:"2026-06-24",t:"23:00",g:"C",h:"Escócia",       hf:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",a:"Brasil",     af:"🇧🇷",v:"Miami",          p:"G",hl:"br"},
+  {id:52,d:"2026-06-24",t:"23:00",g:"C",h:"Marrocos",      hf:"🇲🇦",a:"Haiti",         af:"🇭🇹",v:"Atlanta",        p:"G"},
+  {id:53,d:"2026-06-25",t:"02:00",g:"A",h:"Rep. Checa",    hf:"🇨🇿",a:"México",        af:"🇲🇽",v:"Cidade do México",p:"G"},
+  {id:54,d:"2026-06-25",t:"02:00",g:"A",h:"África do Sul", hf:"🇿🇦",a:"Coreia do Sul", af:"🇰🇷",v:"Monterrey",      p:"G"},
+  {id:55,d:"2026-06-25",t:"21:00",g:"E",h:"Curaçao",       hf:"🇨🇼",a:"Costa do Marfim",af:"🇨🇮",v:"Filadélfia",   p:"G"},
+  {id:56,d:"2026-06-25",t:"21:00",g:"E",h:"Equador",       hf:"🇪🇨",a:"Alemanha",      af:"🇩🇪",v:"Nova York/NJ",   p:"G"},
+  {id:57,d:"2026-06-26",t:"00:00",g:"F",h:"Japão",         hf:"🇯🇵",a:"Suécia",        af:"🇸🇪",v:"Dallas",         p:"G"},
+  {id:58,d:"2026-06-26",t:"00:00",g:"F",h:"Tunísia",       hf:"🇹🇳",a:"Países Baixos", af:"🇳🇱",v:"Kansas City",    p:"G"},
+  {id:59,d:"2026-06-26",t:"03:00",g:"D",h:"Turquia",       hf:"🇹🇷",a:"EUA",           af:"🇺🇸",v:"Los Angeles",    p:"G"},
+  {id:60,d:"2026-06-26",t:"03:00",g:"D",h:"Paraguai",      hf:"🇵🇾",a:"Austrália",     af:"🇦🇺",v:"San Francisco",  p:"G"},
+  {id:61,d:"2026-06-26",t:"20:00",g:"I",h:"Noruega",       hf:"🇳🇴",a:"França",        af:"🇫🇷",v:"Boston",         p:"G"},
+  {id:62,d:"2026-06-26",t:"20:00",g:"I",h:"Senegal",       hf:"🇸🇳",a:"Iraque",        af:"🇮🇶",v:"Toronto",        p:"G"},
+  {id:63,d:"2026-06-27",t:"01:00",g:"H",h:"Cabo Verde",    hf:"🇨🇻",a:"Arábia Saudita",af:"🇸🇦",v:"Houston",       p:"G"},
+  {id:64,d:"2026-06-27",t:"01:00",g:"H",h:"Uruguai",       hf:"🇺🇾",a:"Espanha",       af:"🇪🇸",v:"Guadalajara",    p:"G"},
+  {id:65,d:"2026-06-27",t:"04:00",g:"G",h:"Egito",         hf:"🇪🇬",a:"Irã",           af:"🇮🇷",v:"Seattle",        p:"G"},
+  {id:66,d:"2026-06-27",t:"04:00",g:"G",h:"Nova Zelândia", hf:"🇳🇿",a:"Bélgica",       af:"🇧🇪",v:"Vancouver",      p:"G"},
+  {id:67,d:"2026-06-27",t:"22:00",g:"L",h:"Panamá",        hf:"🇵🇦",a:"Inglaterra",    af:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",v:"Nova York/NJ",  p:"G"},
+  {id:68,d:"2026-06-27",t:"22:00",g:"L",h:"Croácia",       hf:"🇭🇷",a:"Gana",          af:"🇬🇭",v:"Filadélfia",    p:"G"},
+  {id:69,d:"2026-06-28",t:"00:30",g:"K",h:"Colômbia",      hf:"🇨🇴",a:"Portugal",      af:"🇵🇹",v:"Miami",          p:"G",hl:"pt"},
+  {id:70,d:"2026-06-28",t:"00:30",g:"K",h:"Congo RD",      hf:"🇨🇩",a:"Uzbequistão",   af:"🇺🇿",v:"Atlanta",        p:"G"},
+  {id:71,d:"2026-06-28",t:"03:00",g:"J",h:"Argélia",       hf:"🇩🇿",a:"Áustria",       af:"🇦🇹",v:"Kansas City",    p:"G"},
+  {id:72,d:"2026-06-28",t:"03:00",g:"J",h:"Jordânia",      hf:"🇯🇴",a:"Argentina",     af:"🇦🇷",v:"Dallas",         p:"G"},
+  // MATA-MATA
+  {id:73, d:"2026-06-28",t:"21:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Los Angeles",     p:"M"},
+  {id:74, d:"2026-06-29",t:"19:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Houston",         p:"M"},
+  {id:75, d:"2026-06-29",t:"22:30",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Boston",          p:"M"},
+  {id:76, d:"2026-06-30",t:"03:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Monterrey",       p:"M"},
+  {id:77, d:"2026-06-30",t:"19:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
+  {id:78, d:"2026-06-30",t:"23:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Nova York/NJ",    p:"M"},
+  {id:79, d:"2026-07-01",t:"03:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Cidade do México",p:"M"},
+  {id:80, d:"2026-07-01",t:"18:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Atlanta",         p:"M"},
+  {id:81, d:"2026-07-01",t:"22:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Seattle",         p:"M"},
+  {id:82, d:"2026-07-02",t:"02:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"San Francisco",   p:"M"},
+  {id:83, d:"2026-07-02",t:"21:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Los Angeles",     p:"M"},
+  {id:84, d:"2026-07-03",t:"01:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Toronto",         p:"M"},
+  {id:85, d:"2026-07-03",t:"05:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Vancouver",       p:"M"},
+  {id:86, d:"2026-07-03",t:"20:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
+  {id:87, d:"2026-07-03",t:"22:00",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Atlanta",         p:"M"},
+  {id:88, d:"2026-07-04",t:"03:30",g:"R32",      h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Kansas City",     p:"M"},
+  {id:89, d:"2026-07-04",t:"19:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Houston",         p:"M"},
+  {id:90, d:"2026-07-04",t:"23:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Filadélfia",     p:"M"},
+  {id:91, d:"2026-07-05",t:"22:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Nova York/NJ",    p:"M"},
+  {id:92, d:"2026-07-06",t:"02:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Cidade do México",p:"M"},
+  {id:93, d:"2026-07-06",t:"20:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
+  {id:94, d:"2026-07-07",t:"01:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Seattle",         p:"M"},
+  {id:95, d:"2026-07-07",t:"18:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Atlanta",         p:"M"},
+  {id:96, d:"2026-07-07",t:"22:00",g:"Oitavas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Vancouver",       p:"M"},
+  {id:97, d:"2026-07-09",t:"22:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Boston",          p:"M"},
+  {id:98, d:"2026-07-10",t:"21:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Los Angeles",     p:"M"},
+  {id:99, d:"2026-07-11",t:"23:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Miami",           p:"M"},
+  {id:100,d:"2026-07-12",t:"02:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Kansas City",     p:"M"},
+  {id:101,d:"2026-07-14",t:"21:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
+  {id:102,d:"2026-07-15",t:"21:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
+  {id:103,d:"2026-07-18",t:"23:00",g:"3.Lugar",  h:"A definir",hf:"🥉",a:"A definir",af:"🥉",v:"Miami",          p:"M"},
+  {id:104,d:"2026-07-19",t:"21:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
+];
+
+/* Resultados hardcoded (fallback quando APIs falham) – atualizado 14/06/2026 */
+const HC={
+  // 11 Jun – Rodada 1
+  1:{h:2,a:0,s:"fim"},  // México 2-0 África do Sul
+  2:{h:2,a:1,s:"fim"},  // Coreia do Sul 2-1 Rep. Checa
+  // 12 Jun – Rodada 1
+  3:{h:1,a:1,s:"fim"},  // Canadá 1-1 Bósnia-Herzegovina
+  4:{h:4,a:1,s:"fim"},  // EUA 4-1 Paraguai
+  // 13 Jun – Rodada 1
+  5:{h:1,a:1,s:"fim"},  // Qatar 1-1 Suíça (Embolo; Khoukhi 90+4)
+  6:{h:1,a:1,s:"fim"},  // Brasil 1-1 Marrocos (Saibari; Vinícius Jr.)
+  7:{h:0,a:1,s:"fim"},  // Haiti 0-1 Escócia
+  8:{h:0,a:2,s:"fim"},  // Austrália 2-0 Turquia (Irankunda; Metcalfe)
+};
+
+let R={...HC}, FILT='all', tmr=null;
+
+/* ── helpers ───────────────────────────── */
+const today=()=>new Date().toISOString().slice(0,10);
+const ptStart=m=>new Date(m.d+'T'+m.t+':00+01:00');
+const isLive=m=>{const n=Date.now(),s=ptStart(m).getTime();return n>=s&&n<=s+110*60*1e3};
+const isPast=m=>Date.now()>ptStart(m).getTime()+110*60*1e3;
+const MONTHS=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const DAYS=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+function fmtD(d){
+  const dt=new Date(d+'T12:00:00');
+  return `${DAYS[dt.getDay()]}, ${dt.getDate()} ${MONTHS[dt.getMonth()]}${d===today()?' 📍 Hoje':''}`;
+}
+function norm(s){return(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function mtch(m,h,a){
+  const mh=norm(m.h),ma=norm(m.a),nh=norm(h),na=norm(a);
+  const ok=(x,y)=>{const w=x.split(' ')[0],v=y.split(' ')[0];return w===v||x.includes(v)||y.includes(w)};
+  return ok(mh,nh)&&ok(ma,na);
+}
+function log(msg,cls=''){
+  const el=document.getElementById('apiLog');
+  const d=document.createElement('div');
+  d.className=cls; d.textContent=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'})+' – '+msg;
+  el.prepend(d);
+  while(el.children.length>20) el.lastChild.remove();
+}
+function setDot(c){document.getElementById('dot').className='dot '+c}
+function setMsg(t){document.getElementById('sm').textContent=t}
+
+/* ════════════════════════════════════════════
+   API 1 – worldcup26.ir (open, sem chave)
+════════════════════════════════════════════ */
+async function api1(){
+  const r=await fetch('https://worldcup26.ir/get/games',{signal:AbortSignal.timeout(7e3)});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const data=await r.json();
+  const games=Array.isArray(data)?data:(data.games||data.matches||data.data||[]);
+  if(!games.length) throw new Error('lista vazia');
+  let n=0;
+  games.forEach(g=>{
+    const hs=g.home_score??g.homeScore??g.scoreHome??null;
+    const as_=g.away_score??g.awayScore??g.scoreAway??null;
+    if(hs===null||as_===null) return;
+    const hN=g.home_team||g.homeTeam||g.home||'';
+    const aN=g.away_team||g.awayTeam||g.away||'';
+    const st=(g.status||'fim').toLowerCase();
+    const m=M.find(x=>mtch(x,hN,aN));
+    if(m){R[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};n++}
+  });
+  return n;
+}
+
+/* ════════════════════════════════════════════
+   API 2 – TheSportsDB (free key 123)
+   Tenta vários IDs da liga Copa do Mundo
+════════════════════════════════════════════ */
+async function api2(){
+  const leagueIds=['4635','4528','4480'];
+  let events=[];
+  for(const id of leagueIds){
+    try{
+      const r=await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=${id}&s=2026`,
+        {signal:AbortSignal.timeout(7e3)});
+      if(!r.ok) continue;
+      const d=await r.json();
+      if(d.events?.length){events=d.events;break}
+    }catch(_){}
+  }
+  if(!events.length){
+    // busca eventos do dia como fallback
+    const r2=await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=${today()}&s=Soccer`,
+      {signal:AbortSignal.timeout(7e3)});
+    if(r2.ok){const d2=await r2.json();events=d2.events||[]}
+  }
+  if(!events.length) throw new Error('sem eventos');
+  let n=0;
+  events.forEach(ev=>{
+    const hs=ev.intHomeScore,as_=ev.intAwayScore;
+    if(hs===null||hs===undefined||hs==='') return;
+    const m=M.find(x=>mtch(x,ev.strHomeTeam||'',ev.strAwayTeam||''));
+    if(m&&!isNaN(+hs)){R[m.id]={h:+hs,a:+as_,s:'fim'};n++}
+  });
+  return n;
+}
+
+/* ════════════════════════════════════════════
+   API 3 – Sofascore público (sem chave)
+   /api/v1/sport/football/scheduled-events/{date}
+════════════════════════════════════════════ */
+async function api3(){
+  const dates=[today()];
+  const yest=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  if(yest!==today()) dates.push(yest);
+  let n=0;
+  for(const d of dates){
+    const r=await fetch(`https://api.sofascore.com/api/v1/sport/football/scheduled-events/${d}`,
+      {headers:{'User-Agent':'Mozilla/5.0 (compatible; Copa2026/1.0)'},signal:AbortSignal.timeout(8e3)});
+    if(!r.ok) continue;
+    const data=await r.json();
+    (data.events||[]).forEach(ev=>{
+      // uniqueTournament id 16 = FIFA World Cup
+      const tid=ev.tournament?.uniqueTournament?.id;
+      if(tid!==16&&tid!==1352) return;
+      const hs=ev.homeScore?.current,as_=ev.awayScore?.current;
+      if(hs===undefined) return;
+      const st=ev.status?.type||'';
+      const m=M.find(x=>mtch(x,ev.homeTeam?.name||'',ev.awayTeam?.name||''));
+      if(m){R[m.id]={h:+hs,a:+as_,s:st==='inprogress'?'live':'fim'};n++}
+    });
+  }
+  if(n===0) throw new Error('sem dados WC');
+  return n;
+}
+
+/* ── Orquestrador de APIs em cascata ─────── */
+async function fetchResults(){
+  const btn=document.getElementById('br');
+  const sp=document.getElementById('sp');
+  btn.disabled=true; sp.classList.add('on'); setDot('ld');
+
+  const apis=[
+    {lbl:'worldcup26.ir',fn:api1},
+    {lbl:'TheSportsDB',  fn:api2},
+    {lbl:'Sofascore',    fn:api3},
+  ];
+  let ok=false;
+  for(const api of apis){
+    setMsg('🔄 Tentando '+api.lbl+'...');
+    log('Tentando '+api.lbl+'...','ld');
+    try{
+      const n=await api.fn();
+      const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+      setMsg('✅ '+api.lbl+' · '+n+' resultado(s) · '+ts+' · próx. 2h');
+      log('✅ '+api.lbl+' OK – '+n+' resultado(s)','ok');
+      setDot('ok'); ok=true; break;
+    }catch(e){
+      log('❌ '+api.lbl+': '+e.message,'er');
+      console.warn(api.lbl,e);
+    }
+  }
+  if(!ok){
+    Object.assign(R,HC);
+    const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    setMsg('⚠️ APIs indisponíveis · resultados manuais · '+ts+' · próx. 2h');
+    log('⚠️ Todos APIs falharam – usando resultados manuais','er');
+    setDot('er');
+  }
+  btn.disabled=false; sp.classList.remove('on');
+  render();
+  clearTimeout(tmr);
+  tmr=setTimeout(fetchResults,2*60*60*1e3); // 2 horas
+}
+function doRefresh(){clearTimeout(tmr);fetchResults()}
+
+/* ── Filtros ─────────────────────────────── */
+function setF(f,btn){
+  FILT=f;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+function applyF(l){
+  if(FILT==='today') return l.filter(m=>m.d===today());
+  if(FILT==='br')    return l.filter(m=>m.hl==='br');
+  if(FILT==='pt')    return l.filter(m=>m.hl==='pt');
+  if(FILT==='gp')    return l.filter(m=>m.p==='G');
+  if(FILT==='mm')    return l.filter(m=>m.p==='M');
+  return l;
+}
+
+/* ── Render ──────────────────────────────── */
+function render(){
+  const main=document.getElementById('main');
+  const list=applyF(M);
+  if(!list.length){main.innerHTML='<div class="empty">Nenhum jogo com este filtro.</div>';return}
+  const byD={};
+  list.forEach(m=>{if(!byD[m.d])byD[m.d]=[];byD[m.d].push(m)});
+  let html='',lastP=null;
+  Object.keys(byD).sort().forEach(date=>{
+    const ms=byD[date], ph=ms[0].p;
+    if(ph!==lastP){
+      lastP=ph;
+      const lbl=ph==='G'?'⚽ FASE DE GRUPOS':'🏆 FASE ELIMINATÓRIA';
+      html+=`<div class="ps"><span class="pl">${lbl}</span><div class="pln"></div></div>`;
+    }
+    html+=`<div class="db"><div class="dh"><span class="dl">${fmtD(date)}</span><div class="dln"></div><span class="dc">${ms.length} jogo${ms.length>1?'s':''}</span></div>`;
+    ms.forEach(m=>{
+      const r=R[m.id];
+      const live=isLive(m),past=isPast(m);
+      const fin=r?.s==='fim'||(past&&r?.h!==undefined);
+      let cc='card';
+      if(m.hl==='br')cc+=' cB';else if(m.hl==='pt')cc+=' cP';else if(live&&!fin)cc+=' cL';
+      if(fin)cc+=' cF';
+      const pill=m.hl?`<div class="pill">${m.hl==='br'?'🇧🇷 Brasil':'🇵🇹 Portugal'}</div>`:'';
+      let sb='';
+      if(live&&!fin)sb='<span class="s0 lv">AO VIVO</span>';
+      else if(fin)sb='<span class="s0 fm">FIM</span>';
+      else sb='<span class="s0 ag">Agendado</span>';
+      const score=r?.h!==undefined
+        ?`<div class="sc"><span class="sd">${r.h}</span><span class="ss">–</span><span class="sd">${r.a}</span></div>`
+        :'<span class="sv">vs</span>';
+      const hlH=m.hl&&(m.h==='Brasil'||m.h==='Portugal')?'t hl':'t';
+      const hlA=m.hl&&(m.a==='Brasil'||m.a==='Portugal')?'t hl':'t';
+      const mmG=['R32','Oitavas','Quartas','Semi','3.Lugar','FINAL'];
+      const vp=mmG.includes(m.g)?`<span class="vp">${m.g.replace('3.Lugar','3º Lugar').replace('Semi','Semifinal')}</span>`:'';
+      html+=`<div class="${cc}">${pill}<div class="ci"><div class="ct"><div class="ch">${m.t}</div><span class="cg">GRP ${m.g}</span>${sb}</div><div class="tm"><div class="${hlH}"><span class="fl">${m.hf}</span><span class="tn">${m.h}</span></div>${score}<div class="${hlA}"><span class="fl">${m.af}</span><span class="tn">${m.a}</span></div></div><div class="vn">${vp}${m.v}</div></div></div>`;
+    });
+    html+='</div>';
+  });
+  main.innerHTML=html;
+}
+
+/* INIT */
+Object.assign(R,HC);
+render();
+fetchResults();
+</script>
+
+<!-- Botão WhatsApp Flutuante -->
+<a id="wabtn" href="#" onclick="partilharWA(event)" title="Partilhar no WhatsApp">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.121 1.529 5.845L.057 23.882l6.2-1.626A11.935 11.935 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.373l-.36-.214-3.68.965.981-3.594-.235-.369A9.818 9.818 0 1112 21.818z"/>
+  </svg>
+  Partilhar
+</a>
+
+<script>
+function partilharWA(e){
+  e.preventDefault();
+  const url = window.location.href;
+  const txt = encodeURIComponent('⚽ Copa do Mundo 2026 – Horários em Portugal!
+
+🇧🇷 Brasil e 🇵🇹 Portugal em destaque.
+Resultados em tempo real, auto-atualiza a cada 2h.
+
+👉 ' + url);
+  const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+  const waUrl = isMobile
+    ? 'whatsapp://send?text=' + txt
+    : 'https://web.whatsapp.com/send?text=' + txt;
+  window.open(waUrl, '_blank');
+}
+</script>
+</body>
+</html>
