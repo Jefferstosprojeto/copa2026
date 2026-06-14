@@ -161,7 +161,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
 <div id="main"><div class="empty">A carregar...</div></div>
 <div id="apiLog"></div>
-<footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; APIs: <span>worldcup26.ir &rarr; TheSportsDB (key:123) &rarr; Sofascore</span> &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
+<footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; APIs: <span>openfootball (GitHub) &rarr; worldcup26.ir &rarr; ESPN</span> &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
 
 <script>
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -275,19 +275,24 @@ const M=[
   {id:104,d:"2026-07-19",t:"21:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
 ];
 
-/* Resultados hardcoded (fallback quando APIs falham) – atualizado 14/06/2026 */
+/* Resultados hardcoded (fallback) – actualizado 14/06/2026 21:00 PT */
 const HC={
-  // 11 Jun – Rodada 1
+  // 11 Jun
   1:{h:2,a:0,s:"fim"},  // México 2-0 África do Sul
   2:{h:2,a:1,s:"fim"},  // Coreia do Sul 2-1 Rep. Checa
-  // 12 Jun – Rodada 1
+  // 12 Jun
   3:{h:1,a:1,s:"fim"},  // Canadá 1-1 Bósnia-Herzegovina
+  // 13 Jun
   4:{h:4,a:1,s:"fim"},  // EUA 4-1 Paraguai
-  // 13 Jun – Rodada 1
-  5:{h:1,a:1,s:"fim"},  // Qatar 1-1 Suíça (Embolo; Khoukhi 90+4)
-  6:{h:1,a:1,s:"fim"},  // Brasil 1-1 Marrocos (Saibari; Vinícius Jr.)
+  5:{h:1,a:1,s:"fim"},  // Qatar 1-1 Suíça
+  6:{h:1,a:1,s:"fim"},  // Brasil 1-1 Marrocos
   7:{h:0,a:1,s:"fim"},  // Haiti 0-1 Escócia
-  8:{h:0,a:2,s:"fim"},  // Austrália 2-0 Turquia (Irankunda; Metcalfe)
+  8:{h:2,a:0,s:"fim"},  // Austrália 2-0 Turquia
+  // 14 Jun
+  9:{h:4,a:0,s:"fim"},  // Alemanha 4-0 Curaçao
+  10:{h:2,a:2,s:"fim"}, // Países Baixos 2-2 Japão
+  11:{h:1,a:1,s:"fim"}, // Costa do Marfim 1-1 Equador
+  12:{h:2,a:1,s:"fim"}, // Suécia 2-1 Tunísia
 };
 
 let R={...HC}, FILT='all', tmr=null;
@@ -320,100 +325,83 @@ function setDot(c){document.getElementById('dot').className='dot '+c}
 function setMsg(t){document.getElementById('sm').textContent=t}
 
 /* ════════════════════════════════════════════
-   API 1 – worldcup26.ir (open, sem chave)
+   API 1 – openfootball/worldcup.json (GitHub raw)
+   ✅ SEM CORS, sem chave, funciona direto no browser
 ════════════════════════════════════════════ */
 async function api1(){
-  const r=await fetch('https://worldcup26.ir/get/games',{signal:AbortSignal.timeout(7e3)});
-  if(!r.ok) throw new Error('HTTP '+r.status);
+  const r=await fetch('https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json',
+    {signal:AbortSignal.timeout(8e3),cache:'no-store'});
+  if(!r.ok) throw new Error('openfootball '+r.status);
   const data=await r.json();
-  const games=Array.isArray(data)?data:(data.games||data.matches||data.data||[]);
-  if(!games.length) throw new Error('lista vazia');
+  const games=data.matches||[];
   let n=0;
   games.forEach(g=>{
-    const hs=g.home_score??g.homeScore??g.scoreHome??null;
-    const as_=g.away_score??g.awayScore??g.scoreAway??null;
-    if(hs===null||as_===null) return;
-    const hN=g.home_team||g.homeTeam||g.home||'';
-    const aN=g.away_team||g.awayTeam||g.away||'';
-    const st=(g.status||'fim').toLowerCase();
-    const m=M.find(x=>mtch(x,hN,aN));
-    if(m){R[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};n++}
+    if(!g.score?.ft) return;
+    const m=M.find(x=>mtch(x,g.team1||'',g.team2||''));
+    if(m){R[m.id]={h:+g.score.ft[0],a:+g.score.ft[1],s:'fim'};n++}
   });
+  if(n===0) throw new Error('openfootball sem scores');
   return n;
 }
 
 /* ════════════════════════════════════════════
-   API 2 – TheSportsDB (free key 123)
-   Tenta vários IDs da liga Copa do Mundo
+   API 2 – worldcup26.ir (dedicada Copa 2026)
 ════════════════════════════════════════════ */
 async function api2(){
-  const leagueIds=['4635','4528','4480'];
-  let events=[];
-  for(const id of leagueIds){
-    try{
-      const r=await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsseason.php?id=${id}&s=2026`,
-        {signal:AbortSignal.timeout(7e3)});
-      if(!r.ok) continue;
-      const d=await r.json();
-      if(d.events?.length){events=d.events;break}
-    }catch(_){}
-  }
-  if(!events.length){
-    // busca eventos do dia como fallback
-    const r2=await fetch(`https://www.thesportsdb.com/api/v1/json/123/eventsday.php?d=${today()}&s=Soccer`,
-      {signal:AbortSignal.timeout(7e3)});
-    if(r2.ok){const d2=await r2.json();events=d2.events||[]}
-  }
-  if(!events.length) throw new Error('sem eventos');
+  const r=await fetch('https://worldcup26.ir/get/games',
+    {signal:AbortSignal.timeout(7e3),cache:'no-store'});
+  if(!r.ok) throw new Error('wc26 '+r.status);
+  const data=await r.json();
+  const games=Array.isArray(data)?data:(data.games||data.matches||data.data||[]);
   let n=0;
-  events.forEach(ev=>{
-    const hs=ev.intHomeScore,as_=ev.intAwayScore;
-    if(hs===null||hs===undefined||hs==='') return;
-    const m=M.find(x=>mtch(x,ev.strHomeTeam||'',ev.strAwayTeam||''));
-    if(m&&!isNaN(+hs)){R[m.id]={h:+hs,a:+as_,s:'fim'};n++}
+  games.forEach(g=>{
+    const hs=g.home_score??g.homeScore??null;
+    const as_=g.away_score??g.awayScore??null;
+    if(hs===null||as_===null) return;
+    const st=(g.status||'fim').toLowerCase();
+    const m=M.find(x=>mtch(x,g.home_team||g.home||'',g.away_team||g.away||''));
+    if(m){R[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};n++}
   });
+  if(n===0) throw new Error('wc26 sem scores');
   return n;
 }
 
 /* ════════════════════════════════════════════
-   API 3 – Sofascore público (sem chave)
-   /api/v1/sport/football/scheduled-events/{date}
+   API 3 – ESPN pública (sem chave, sem CORS)
 ════════════════════════════════════════════ */
 async function api3(){
-  const dates=[today()];
-  const yest=new Date(Date.now()-864e5).toISOString().slice(0,10);
-  if(yest!==today()) dates.push(yest);
+  const r=await fetch('https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',
+    {signal:AbortSignal.timeout(8e3),cache:'no-store'});
+  if(!r.ok) throw new Error('ESPN '+r.status);
+  const data=await r.json();
+  const evts=data.events||[];
   let n=0;
-  for(const d of dates){
-    const r=await fetch(`https://api.sofascore.com/api/v1/sport/football/scheduled-events/${d}`,
-      {headers:{'User-Agent':'Mozilla/5.0 (compatible; Copa2026/1.0)'},signal:AbortSignal.timeout(8e3)});
-    if(!r.ok) continue;
-    const data=await r.json();
-    (data.events||[]).forEach(ev=>{
-      // uniqueTournament id 16 = FIFA World Cup
-      const tid=ev.tournament?.uniqueTournament?.id;
-      if(tid!==16&&tid!==1352) return;
-      const hs=ev.homeScore?.current,as_=ev.awayScore?.current;
-      if(hs===undefined) return;
-      const st=ev.status?.type||'';
-      const m=M.find(x=>mtch(x,ev.homeTeam?.name||'',ev.awayTeam?.name||''));
-      if(m){R[m.id]={h:+hs,a:+as_,s:st==='inprogress'?'live':'fim'};n++}
-    });
-  }
-  if(n===0) throw new Error('sem dados WC');
+  evts.forEach(ev=>{
+    const comp=ev.competitions?.[0];
+    if(!comp) return;
+    const live=comp.status?.type?.state==='in';
+    const teams=comp.competitors||[];
+    const home=teams.find(t=>t.homeAway==='home');
+    const away=teams.find(t=>t.homeAway==='away');
+    if(!home||!away||home.score===undefined) return;
+    const hs=parseInt(home.score), as_=parseInt(away.score);
+    if(isNaN(hs)) return;
+    const m=M.find(x=>mtch(x,home.team?.displayName||'',away.team?.displayName||''));
+    if(m){R[m.id]={h:hs,a:as_,s:live?'live':'fim'};n++}
+  });
+  if(n===0) throw new Error('ESPN sem dados Copa');
   return n;
 }
 
-/* ── Orquestrador de APIs em cascata ─────── */
+/* ── Orquestrador: tenta as 3 em sequência ── */
 async function fetchResults(){
   const btn=document.getElementById('br');
   const sp=document.getElementById('sp');
   btn.disabled=true; sp.classList.add('on'); setDot('ld');
-
   const apis=[
-    {lbl:'worldcup26.ir',fn:api1},
-    {lbl:'TheSportsDB',  fn:api2},
-    {lbl:'Sofascore',    fn:api3},
+    {lbl:'openfootball (GitHub)',fn:api1},
+    {lbl:'worldcup26.ir',       fn:api2},
+    {lbl:'ESPN API',            fn:api3},
   ];
   let ok=false;
   for(const api of apis){
@@ -423,24 +411,23 @@ async function fetchResults(){
       const n=await api.fn();
       const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
       setMsg('✅ '+api.lbl+' · '+n+' resultado(s) · '+ts+' · próx. 2h');
-      log('✅ '+api.lbl+' OK – '+n+' resultado(s)','ok');
+      log('✅ '+api.lbl+' – '+n+' resultado(s)','ok');
       setDot('ok'); ok=true; break;
     }catch(e){
       log('❌ '+api.lbl+': '+e.message,'er');
-      console.warn(api.lbl,e);
     }
   }
   if(!ok){
     Object.assign(R,HC);
     const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-    setMsg('⚠️ APIs indisponíveis · resultados manuais · '+ts+' · próx. 2h');
-    log('⚠️ Todos APIs falharam – usando resultados manuais','er');
+    setMsg('⚠️ APIs offline · resultados manuais activos · '+ts);
+    log('⚠️ Todas as APIs falharam – hardcoded activo','er');
     setDot('er');
   }
   btn.disabled=false; sp.classList.remove('on');
   render();
   clearTimeout(tmr);
-  tmr=setTimeout(fetchResults,2*60*60*1e3); // 2 horas
+  tmr=setTimeout(fetchResults,2*60*60*1e3);
 }
 function doRefresh(){clearTimeout(tmr);fetchResults()}
 
