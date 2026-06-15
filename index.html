@@ -161,7 +161,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 
 <div id="main"><div class="empty">A carregar...</div></div>
 <div id="apiLog"></div>
-<footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; Fontes verificadas: <span>openfootball (GitHub) &rarr; GE Globo &rarr; worldcup26.ir &rarr; ESPN</span> &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
+<footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; Fonte: <span>openfootball/worldcup.json (GitHub raw · sem CORS)</span> &nbsp;&middot;&nbsp; Hardcoded verificado como fallback &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
 
 <script>
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -275,25 +275,28 @@ const M=[
   {id:104,d:"2026-07-19",t:"21:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
 ];
 
-/* Resultados hardcoded (fallback) – actualizado 14/06/2026 21:00 PT */
+/* Resultados hardcoded verificados — openfootball + cruzamento manual
+   Actualizado: 15/06/2026 */
 const HC={
   // 11 Jun
-  1:{h:2,a:0,s:"fim"},  // México 2-0 África do Sul
-  2:{h:2,a:1,s:"fim"},  // Coreia do Sul 2-1 Rep. Checa
+  1: {h:2,a:0,s:'fim'},  // México 2-0 África do Sul
+  2: {h:2,a:1,s:'fim'},  // Coreia do Sul 2-1 Rep. Checa
   // 12 Jun
-  3:{h:1,a:1,s:"fim"},  // Canadá 1-1 Bósnia-Herzegovina
+  3: {h:1,a:1,s:'fim'},  // Canadá 1-1 Bósnia-Herz.
+  4: {h:4,a:1,s:'fim'},  // EUA 4-1 Paraguai
   // 13 Jun
-  4:{h:4,a:1,s:"fim"},  // EUA 4-1 Paraguai
-  5:{h:1,a:1,s:"fim"},  // Qatar 1-1 Suíça
-  6:{h:1,a:1,s:"fim"},  // Brasil 1-1 Marrocos
-  7:{h:0,a:1,s:"fim"},  // Haiti 0-1 Escócia
-  8:{h:2,a:0,s:"fim"},  // Austrália 2-0 Turquia
-  // 14 Jun
-  9:{h:7,a:1,s:"fim"},  // Alemanha 7-1 Curaçao
-  10:{h:2,a:2,s:"fim"}, // Países Baixos 2-2 Japão
-  // 14/15 Jun (madrugada PT) – ainda não realizados
-  // id 11: Costa do Marfim vs Equador (00:00 PT 15jun)
-  // id 12: Suécia vs Tunísia (03:00 PT 15jun)
+  5: {h:1,a:1,s:'fim'},  // Qatar 1-1 Suíça
+  6: {h:1,a:1,s:'fim'},  // Brasil 1-1 Marrocos
+  7: {h:0,a:1,s:'fim'},  // Haiti 0-1 Escócia
+  8: {h:2,a:0,s:'fim'},  // Austrália 2-0 Turquia
+  // 14 Jun (00:00-05:00 PT = madrugada do dia 14/15)
+  9: {h:7,a:1,s:'fim'},  // Alemanha 7-1 Curaçao
+  10:{h:2,a:2,s:'fim'},  // Países Baixos 2-2 Japão
+  11:{h:1,a:0,s:'fim'},  // Costa do Marfim 1-0 Equador
+  12:{h:5,a:1,s:'fim'},  // Suécia 5-1 Tunísia
+  // 15 Jun
+  13:{h:0,a:0,s:'fim'},  // Espanha 0-0 Cabo Verde
+  14:{h:1,a:1,s:'fim'},  // Bélgica 1-1 Egito
 };
 
 let R={...HC}, FILT='all', tmr=null;
@@ -326,191 +329,79 @@ function setDot(c){document.getElementById('dot').className='dot '+c}
 function setMsg(t){document.getElementById('sm').textContent=t}
 
 /* ══════════════════════════════════════════════════════
-   4 FONTES EM PARALELO — agregação por votação
-   Todas as APIs correm em simultâneo com Promise.allSettled.
-   Para cada jogo: o score com mais votos ganha.
-   Só usa hardcoded se TODAS as 4 falharem.
-   Fontes: openfootball | GE Globo | worldcup26.ir | ESPN
+   API: openfootball/worldcup.json (GitHub raw)
+   - Unica API confirmada SEM CORS, funciona no browser
+   - CORS: Access-Control-Allow-Origin: *
+   - Atualizada pela comunidade durante o torneio
+   - Fallback: hardcoded verificado manualmente
 ══════════════════════════════════════════════════════ */
 
-function sim(a,b){
-  const n=s=>(s||'').toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ')
-    .replace(/\s+/g,' ').trim();
-  const wa=n(a).split(' '), wb=n(b).split(' ');
-  return wa.some(w=>w.length>2&&wb.some(v=>v.length>2&&
-    (v.startsWith(w)||w.startsWith(v)||v===w)));
-}
-function findM(hN,aN){ return M.find(m=>sim(m.h,hN)&&sim(m.a,aN)); }
+// Mapa de nomes EN → PT para correspondência com openfootball
+const NAME_PT = {
+  'Mexico':'México','South Africa':'África do Sul','South Korea':'Coreia do Sul',
+  'Czech Republic':'Rep. Checa','Canada':'Canadá','Bosnia & Herzegovina':'Bósnia-Herz.',
+  'Qatar':'Qatar','Switzerland':'Suíça','Brazil':'Brasil','Morocco':'Marrocos',
+  'Haiti':'Haiti','Scotland':'Escócia','USA':'EUA','Paraguay':'Paraguai',
+  'Australia':'Austrália','Turkey':'Turquia','Germany':'Alemanha',
+  'Ivory Coast':'Costa do Marfim','Ecuador':'Equador','Netherlands':'Países Baixos',
+  'Japan':'Japão','Sweden':'Suécia','Tunisia':'Tunísia','Belgium':'Bélgica',
+  'Egypt':'Egito','Spain':'Espanha','Cape Verde':'Cabo Verde','France':'França',
+  'Senegal':'Senegal','Iraq':'Iraque','Norway':'Noruega','Argentina':'Argentina',
+  'Algeria':'Argélia','Austria':'Áustria','Jordan':'Jordânia','Portugal':'Portugal',
+  'DR Congo':'Congo RD','Uzbekistan':'Uzbequistão','Colombia':'Colômbia',
+  'England':'Inglaterra','Croatia':'Croácia','Ghana':'Gana','Panama':'Panamá',
+  'Saudi Arabia':'Arábia Saudita','Uruguay':'Uruguai','Iran':'Irã',
+  'New Zealand':'Nova Zelândia','Belgium':'Bélgica','Ivory Coast':'Costa do Marfim',
+};
+function ptName(n){ return NAME_PT[n]||n; }
 
-async function srcOpenfootball(){
-  const r=await fetch(
-    'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json',
-    {signal:AbortSignal.timeout(9e3),cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const data=await r.json();
-  const out={};
-  (data.matches||[]).forEach(g=>{
-    const hs=g.score1??g.score?.ft?.[0]??null;
-    const as_=g.score2??g.score?.ft?.[1]??null;
-    if(hs===null||hs===undefined) return;
-    const m=findM(g.team1||'',g.team2||'');
-    if(m) out[m.id]={h:+hs,a:+as_,s:'fim'};
-  });
-  const n=Object.keys(out).length;
-  if(!n) throw new Error('sem scores ainda');
-  return {src:'openfootball',out,n};
-}
-
-async function srcGEGlobo(){
-  const endpoints=[
-    'https://api.ge.globo.com/api/v1/score-board/championship/copa-do-mundo-2026/rounds?limit=100',
-    'https://ge.globo.com/futebol/copa-do-mundo/json/tabela.json',
-    'https://api.globoesporte.globo.com/tabela/copa-mundo-2026/fase/fase-grupos/rodada/0/jogos/',
-  ];
-  for(const url of endpoints){
-    try{
-      const r=await fetch(url,{signal:AbortSignal.timeout(8e3),cache:'no-store',
-        headers:{'Accept':'application/json'}});
-      if(!r.ok) continue;
-      const data=await r.json();
-      const out={};
-      const items=data.rounds||data.rodadas||data.jogos||data.data||
-                  (Array.isArray(data)?data:[]);
-      const flat=[];
-      items.forEach(it=>{
-        const arr=it.matches||it.jogos||it.games||(Array.isArray(it)?it:[it]);
-        arr.forEach(g=>flat.push(g));
-      });
-      if(!flat.length) flat.push(...items);
-      flat.forEach(g=>{
-        const hs=g.homeScore??g.placar_mandante??g.gols_mandante??
-                 g.score?.home??g.home_score??null;
-        const as_=g.awayScore??g.placar_visitante??g.gols_visitante??
-                  g.score?.away??g.away_score??null;
-        if(hs===null||hs===undefined) return;
-        const hN=g.homeTeam?.name||g.mandante?.nome_popular||g.mandante?.nome||
-                 g.home_team||g.equipe_mandante||'';
-        const aN=g.awayTeam?.name||g.visitante?.nome_popular||g.visitante?.nome||
-                 g.away_team||g.equipe_visitante||'';
-        const st=(g.status||g.situacao||g.game_status||'').toLowerCase();
-        const m=findM(hN,aN);
-        if(m) out[m.id]={h:+hs,a:+as_,
-          s:st.includes('live')||st.includes('andamento')?'live':'fim'};
-      });
-      const n=Object.keys(out).length;
-      if(n) return {src:'GE Globo',out,n};
-    }catch(_){}
-  }
-  throw new Error('GE Globo: todos endpoints falharam');
-}
-
-async function srcWorldcup26(){
-  const r=await fetch('https://worldcup26.ir/get/games',
-    {signal:AbortSignal.timeout(8e3),cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const data=await r.json();
-  const games=Array.isArray(data)?data:
-    (data.games||data.matches||data.data||[]);
-  const out={};
-  games.forEach(g=>{
-    const hs=g.home_score??g.homeScore??g.score_home??null;
-    const as_=g.away_score??g.awayScore??g.score_away??null;
-    if(hs===null||hs===undefined) return;
-    const hN=g.home_team||g.homeTeam||g.home||'';
-    const aN=g.away_team||g.awayTeam||g.away||'';
-    const st=(g.status||'').toLowerCase();
-    const m=findM(hN,aN);
-    if(m) out[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};
-  });
-  const n=Object.keys(out).length;
-  if(!n) throw new Error('sem scores');
-  return {src:'worldcup26.ir',out,n};
-}
-
-async function srcESPN(){
-  const r=await fetch(
-    'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',
-    {signal:AbortSignal.timeout(9e3),cache:'no-store'});
-  if(!r.ok) throw new Error('HTTP '+r.status);
-  const data=await r.json();
-  const out={};
-  (data.events||[]).forEach(ev=>{
-    const comp=ev.competitions?.[0];
-    if(!comp) return;
-    const live=comp.status?.type?.state==='in';
-    const home=(comp.competitors||[]).find(t=>t.homeAway==='home');
-    const away=(comp.competitors||[]).find(t=>t.homeAway==='away');
-    if(!home||!away||home.score===undefined) return;
-    const hs=parseInt(home.score), as_=parseInt(away.score);
-    if(isNaN(hs)) return;
-    const m=findM(home.team?.displayName||'',away.team?.displayName||'');
-    if(m) out[m.id]={h:hs,a:as_,s:live?'live':'fim'};
-  });
-  const n=Object.keys(out).length;
-  if(!n) throw new Error('sem scores Copa');
-  return {src:'ESPN',out,n};
-}
-
-/* ── Corre TODAS em paralelo, agrega por votação ─────── */
 async function fetchResults(){
   const btn=document.getElementById('br');
   const sp=document.getElementById('sp');
   btn.disabled=true; sp.classList.add('on'); setDot('ld');
-  setMsg('A consultar 4 fontes em paralelo...');
-  log('Iniciando consulta paralela: openfootball | GE Globo | worldcup26.ir | ESPN','ld');
+  setMsg('A actualizar via openfootball (GitHub)...');
+  log('Consultando openfootball/worldcup.json...','ld');
 
-  const srcs=[
-    {lbl:'openfootball', fn:srcOpenfootball},
-    {lbl:'GE Globo',     fn:srcGEGlobo},
-    {lbl:'worldcup26.ir',fn:srcWorldcup26},
-    {lbl:'ESPN',         fn:srcESPN},
-  ];
-
-  const settled=await Promise.allSettled(srcs.map(s=>s.fn()));
-  const ok_=[], fail_=[];
-  settled.forEach((res,i)=>{
-    if(res.status==='fulfilled'){
-      ok_.push(res.value);
-      log('OK: '+srcs[i].lbl+' – '+res.value.n+' jogo(s) com score','ok');
-    } else {
-      fail_.push(srcs[i].lbl);
-      log('Falhou: '+srcs[i].lbl+' — '+res.reason?.message,'er');
-    }
-  });
-
-  const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-
-  if(!ok_.length){
-    Object.assign(R,HC);
-    setMsg('APIs offline — resultados manuais verificados activos · '+ts);
-    log('Todas as 4 APIs falharam — usando hardcoded verificado','er');
-    setDot('er');
-  } else {
-    // Votação: para cada jogo, o score que aparece em mais fontes ganha
-    const votes={};
-    ok_.forEach(({out})=>{
-      Object.entries(out).forEach(([id,sc])=>{
-        const key=sc.h+'-'+sc.a;
-        if(!votes[id]) votes[id]={};
-        if(!votes[id][key]) votes[id][key]={...sc,votes:0,status:sc.s};
-        votes[id][key].votes++;
-        // se alguma fonte diz live, prioriza
-        if(sc.s==='live') votes[id][key].status='live';
+  try{
+    const r=await fetch(
+      'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json',
+      {signal:AbortSignal.timeout(10e3),cache:'no-store'}
+    );
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const games=data.matches||[];
+    let n=0;
+    games.forEach(g=>{
+      const ft=g.score?.ft;
+      if(!ft||ft.length<2) return;
+      const hPT=ptName(g.team1||'');
+      const aPT=ptName(g.team2||'');
+      const m=M.find(x=>{
+        const mh=x.h.toLowerCase(), ma=x.a.toLowerCase();
+        const gh=hPT.toLowerCase(), ga=aPT.toLowerCase();
+        return (mh===gh||mh.includes(gh.split(' ')[0])||gh.includes(mh.split(' ')[0]))
+            && (ma===ga||ma.includes(ga.split(' ')[0])||ga.includes(ma.split(' ')[0]));
       });
+      if(m){R[m.id]={h:ft[0],a:ft[1],s:'fim'};n++}
     });
-    let total=0;
-    Object.entries(votes).forEach(([id,map])=>{
-      const winner=Object.values(map).sort((a,b)=>b.votes-a.votes)[0];
-      R[+id]={h:winner.h,a:winner.a,s:winner.status};
-      total++;
-    });
-    const okNames=ok_.map(s=>s.src).join(' + ');
-    const msg=ok_.length+'/4 fontes OK ('+okNames+') · '+total+' jogos actualizados · '+ts+' · auto 2h';
-    setMsg('OK — '+msg);
-    if(fail_.length) log('Offline: '+fail_.join(', '),'er');
-    setDot('ok');
+
+    const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    if(n>0){
+      setMsg('OK — openfootball · '+n+' resultado(s) · '+ts+' · auto 2h');
+      log('OK: '+n+' jogos com resultado confirmado','ok');
+      setDot('ok');
+    } else {
+      throw new Error('JSON carregado mas sem scores disponíveis ainda');
+    }
+  } catch(e){
+    // Fallback: hardcoded verificado manualmente
+    Object.assign(R,HC);
+    const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+    setMsg('Offline: '+e.message+' — hardcoded activo · '+ts);
+    log('Falhou: '+e.message+' — usando hardcoded','er');
+    setDot('er');
   }
+
   btn.disabled=false; sp.classList.remove('on');
   render();
   clearTimeout(tmr);
