@@ -325,161 +325,196 @@ function log(msg,cls=''){
 function setDot(c){document.getElementById('dot').className='dot '+c}
 function setMsg(t){document.getElementById('sm').textContent=t}
 
-/* ═══════════════════════════════════════════════════════════
-   FONTES DE RESULTADOS — 4 APIs em cascata (verificação cruzada)
-   Lógica: tenta cada uma em ordem; a primeira que retornar dados
-   com scores confirmados é usada. Todas sem chave/CORS.
+/* ══════════════════════════════════════════════════════
+   4 FONTES EM PARALELO — agregação por votação
+   Todas as APIs correm em simultâneo com Promise.allSettled.
+   Para cada jogo: o score com mais votos ganha.
+   Só usa hardcoded se TODAS as 4 falharem.
+   Fontes: openfootball | GE Globo | worldcup26.ir | ESPN
+══════════════════════════════════════════════════════ */
 
-   1. openfootball/worldcup.json (GitHub raw) — sem CORS, sem chave
-   2. GE Globo API JSON              — fonte BR oficial confiável
-   3. worldcup26.ir                  — dedicada Copa 2026
-   4. ESPN API pública               — fallback global
-═══════════════════════════════════════════════════════════ */
+function sim(a,b){
+  const n=s=>(s||'').toLowerCase().normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]/g,' ')
+    .replace(/\s+/g,' ').trim();
+  const wa=n(a).split(' '), wb=n(b).split(' ');
+  return wa.some(w=>w.length>2&&wb.some(v=>v.length>2&&
+    (v.startsWith(w)||w.startsWith(v)||v===w)));
+}
+function findM(hN,aN){ return M.find(m=>sim(m.h,hN)&&sim(m.a,aN)); }
 
-/* ── API 1: openfootball GitHub raw ─────────────────────── */
-async function api1(){
+async function srcOpenfootball(){
   const r=await fetch(
     'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json',
-    {signal:AbortSignal.timeout(8e3),cache:'no-store'}
-  );
-  if(!r.ok) throw new Error('openfootball HTTP '+r.status);
+    {signal:AbortSignal.timeout(9e3),cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
   const data=await r.json();
-  const games=data.matches||[];
-  let n=0;
-  games.forEach(g=>{
-    if(!g.score?.ft) return; // sem resultado ainda
-    const m=M.find(x=>mtch(x,g.team1||'',g.team2||''));
-    if(m){R[m.id]={h:+g.score.ft[0],a:+g.score.ft[1],s:'fim'};n++}
+  const out={};
+  (data.matches||[]).forEach(g=>{
+    const hs=g.score1??g.score?.ft?.[0]??null;
+    const as_=g.score2??g.score?.ft?.[1]??null;
+    if(hs===null||hs===undefined) return;
+    const m=findM(g.team1||'',g.team2||'');
+    if(m) out[m.id]={h:+hs,a:+as_,s:'fim'};
   });
-  if(n===0) throw new Error('openfootball: sem scores disponíveis ainda');
-  return n;
+  const n=Object.keys(out).length;
+  if(!n) throw new Error('sem scores ainda');
+  return {src:'openfootball',out,n};
 }
 
-/* ── API 2: GE Globo (fonte BR oficial, confiável) ───────── */
-async function api2(){
-  // GE Globo expõe dados de competições via endpoint público
-  const url='https://api.ge.globo.com/api/v1/score-board/championship/copa-do-mundo-2026/rounds?limit=100';
-  const r=await fetch(url,{
-    signal:AbortSignal.timeout(8e3),
-    cache:'no-store',
-    headers:{'Accept':'application/json'}
-  });
-  if(!r.ok) throw new Error('GE Globo HTTP '+r.status);
-  const data=await r.json();
-  // GE retorna {rounds:[{matches:[{homeTeam,awayTeam,homeScore,awayScore,status}]}]}
-  const rounds=data.rounds||data.data||[];
-  let n=0;
-  rounds.forEach(round=>{
-    const matches=round.matches||round.games||[];
-    matches.forEach(g=>{
-      const hs=g.homeScore??g.home_score??g.score?.home??null;
-      const as_=g.awayScore??g.away_score??g.score?.away??null;
-      if(hs===null||hs===undefined) return;
-      const st=(g.status||g.match_status||'fim').toLowerCase();
-      const hN=g.homeTeam?.name||g.home_team||g.homeTeamName||'';
-      const aN=g.awayTeam?.name||g.away_team||g.awayTeamName||'';
-      const m=M.find(x=>mtch(x,hN,aN));
-      if(m){R[m.id]={h:+hs,a:+as_,s:st.includes('live')||st.includes('progres')?'live':'fim'};n++}
-    });
-  });
-  if(n===0) throw new Error('GE Globo: sem scores ou formato inesperado');
-  return n;
+async function srcGEGlobo(){
+  const endpoints=[
+    'https://api.ge.globo.com/api/v1/score-board/championship/copa-do-mundo-2026/rounds?limit=100',
+    'https://ge.globo.com/futebol/copa-do-mundo/json/tabela.json',
+    'https://api.globoesporte.globo.com/tabela/copa-mundo-2026/fase/fase-grupos/rodada/0/jogos/',
+  ];
+  for(const url of endpoints){
+    try{
+      const r=await fetch(url,{signal:AbortSignal.timeout(8e3),cache:'no-store',
+        headers:{'Accept':'application/json'}});
+      if(!r.ok) continue;
+      const data=await r.json();
+      const out={};
+      const items=data.rounds||data.rodadas||data.jogos||data.data||
+                  (Array.isArray(data)?data:[]);
+      const flat=[];
+      items.forEach(it=>{
+        const arr=it.matches||it.jogos||it.games||(Array.isArray(it)?it:[it]);
+        arr.forEach(g=>flat.push(g));
+      });
+      if(!flat.length) flat.push(...items);
+      flat.forEach(g=>{
+        const hs=g.homeScore??g.placar_mandante??g.gols_mandante??
+                 g.score?.home??g.home_score??null;
+        const as_=g.awayScore??g.placar_visitante??g.gols_visitante??
+                  g.score?.away??g.away_score??null;
+        if(hs===null||hs===undefined) return;
+        const hN=g.homeTeam?.name||g.mandante?.nome_popular||g.mandante?.nome||
+                 g.home_team||g.equipe_mandante||'';
+        const aN=g.awayTeam?.name||g.visitante?.nome_popular||g.visitante?.nome||
+                 g.away_team||g.equipe_visitante||'';
+        const st=(g.status||g.situacao||g.game_status||'').toLowerCase();
+        const m=findM(hN,aN);
+        if(m) out[m.id]={h:+hs,a:+as_,
+          s:st.includes('live')||st.includes('andamento')?'live':'fim'};
+      });
+      const n=Object.keys(out).length;
+      if(n) return {src:'GE Globo',out,n};
+    }catch(_){}
+  }
+  throw new Error('GE Globo: todos endpoints falharam');
 }
 
-/* ── API 3: worldcup26.ir (dedicada Copa 2026) ───────────── */
-async function api3(){
+async function srcWorldcup26(){
   const r=await fetch('https://worldcup26.ir/get/games',
-    {signal:AbortSignal.timeout(7e3),cache:'no-store'}
-  );
-  if(!r.ok) throw new Error('worldcup26.ir HTTP '+r.status);
+    {signal:AbortSignal.timeout(8e3),cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
   const data=await r.json();
-  const games=Array.isArray(data)?data:(data.games||data.matches||data.data||[]);
-  let n=0;
+  const games=Array.isArray(data)?data:
+    (data.games||data.matches||data.data||[]);
+  const out={};
   games.forEach(g=>{
-    const hs=g.home_score??g.homeScore??null;
-    const as_=g.away_score??g.awayScore??null;
-    if(hs===null||as_===null) return;
-    const st=(g.status||'fim').toLowerCase();
+    const hs=g.home_score??g.homeScore??g.score_home??null;
+    const as_=g.away_score??g.awayScore??g.score_away??null;
+    if(hs===null||hs===undefined) return;
     const hN=g.home_team||g.homeTeam||g.home||'';
     const aN=g.away_team||g.awayTeam||g.away||'';
-    const m=M.find(x=>mtch(x,hN,aN));
-    if(m){R[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};n++}
+    const st=(g.status||'').toLowerCase();
+    const m=findM(hN,aN);
+    if(m) out[m.id]={h:+hs,a:+as_,s:st.includes('live')?'live':'fim'};
   });
-  if(n===0) throw new Error('worldcup26.ir: sem scores');
-  return n;
+  const n=Object.keys(out).length;
+  if(!n) throw new Error('sem scores');
+  return {src:'worldcup26.ir',out,n};
 }
 
-/* ── API 4: ESPN pública (fallback global) ───────────────── */
-async function api4(){
+async function srcESPN(){
   const r=await fetch(
     'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard',
-    {signal:AbortSignal.timeout(8e3),cache:'no-store'}
-  );
-  if(!r.ok) throw new Error('ESPN HTTP '+r.status);
+    {signal:AbortSignal.timeout(9e3),cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
   const data=await r.json();
-  const evts=data.events||[];
-  let n=0;
-  evts.forEach(ev=>{
+  const out={};
+  (data.events||[]).forEach(ev=>{
     const comp=ev.competitions?.[0];
     if(!comp) return;
     const live=comp.status?.type?.state==='in';
-    const teams=comp.competitors||[];
-    const home=teams.find(t=>t.homeAway==='home');
-    const away=teams.find(t=>t.homeAway==='away');
+    const home=(comp.competitors||[]).find(t=>t.homeAway==='home');
+    const away=(comp.competitors||[]).find(t=>t.homeAway==='away');
     if(!home||!away||home.score===undefined) return;
     const hs=parseInt(home.score), as_=parseInt(away.score);
     if(isNaN(hs)) return;
-    const hN=home.team?.displayName||'';
-    const aN=away.team?.displayName||'';
-    const m=M.find(x=>mtch(x,hN,aN));
-    if(m){R[m.id]={h:hs,a:as_,s:live?'live':'fim'};n++}
+    const m=findM(home.team?.displayName||'',away.team?.displayName||'');
+    if(m) out[m.id]={h:hs,a:as_,s:live?'live':'fim'};
   });
-  if(n===0) throw new Error('ESPN: sem dados Copa 2026');
-  return n;
+  const n=Object.keys(out).length;
+  if(!n) throw new Error('sem scores Copa');
+  return {src:'ESPN',out,n};
 }
 
-/* ── Orquestrador: verifica as 4 fontes em cascata ──────── */
+/* ── Corre TODAS em paralelo, agrega por votação ─────── */
 async function fetchResults(){
   const btn=document.getElementById('br');
   const sp=document.getElementById('sp');
   btn.disabled=true; sp.classList.add('on'); setDot('ld');
+  setMsg('A consultar 4 fontes em paralelo...');
+  log('Iniciando consulta paralela: openfootball | GE Globo | worldcup26.ir | ESPN','ld');
 
-  const apis=[
-    {lbl:'openfootball (GitHub)', fn:api1},
-    {lbl:'GE Globo',              fn:api2},
-    {lbl:'worldcup26.ir',         fn:api3},
-    {lbl:'ESPN API',              fn:api4},
+  const srcs=[
+    {lbl:'openfootball', fn:srcOpenfootball},
+    {lbl:'GE Globo',     fn:srcGEGlobo},
+    {lbl:'worldcup26.ir',fn:srcWorldcup26},
+    {lbl:'ESPN',         fn:srcESPN},
   ];
 
-  let ok=false;
-  for(const api of apis){
-    setMsg('🔄 Verificando '+api.lbl+'...');
-    log('Verificando '+api.lbl+'...','ld');
-    try{
-      const n=await api.fn();
-      const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-      setMsg('✅ '+api.lbl+' · '+n+' resultado(s) confirmado(s) · '+ts+' · próx. 2h');
-      log('✅ '+api.lbl+' OK – '+n+' resultado(s)','ok');
-      setDot('ok'); ok=true; break;
-    }catch(e){
-      log('❌ '+api.lbl+': '+e.message,'er');
-      console.warn(api.lbl, e.message);
+  const settled=await Promise.allSettled(srcs.map(s=>s.fn()));
+  const ok_=[], fail_=[];
+  settled.forEach((res,i)=>{
+    if(res.status==='fulfilled'){
+      ok_.push(res.value);
+      log('OK: '+srcs[i].lbl+' – '+res.value.n+' jogo(s) com score','ok');
+    } else {
+      fail_.push(srcs[i].lbl);
+      log('Falhou: '+srcs[i].lbl+' — '+res.reason?.message,'er');
     }
-  }
+  });
 
-  if(!ok){
-    // Todas as APIs falharam: aplicar hardcoded verificado manualmente
+  const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
+
+  if(!ok_.length){
     Object.assign(R,HC);
-    const ts=new Date().toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
-    setMsg('⚠️ APIs indisponíveis · a usar resultados verificados manualmente · '+ts);
-    log('⚠️ Todas as APIs falharam — hardcoded verificado activo','er');
+    setMsg('APIs offline — resultados manuais verificados activos · '+ts);
+    log('Todas as 4 APIs falharam — usando hardcoded verificado','er');
     setDot('er');
+  } else {
+    // Votação: para cada jogo, o score que aparece em mais fontes ganha
+    const votes={};
+    ok_.forEach(({out})=>{
+      Object.entries(out).forEach(([id,sc])=>{
+        const key=sc.h+'-'+sc.a;
+        if(!votes[id]) votes[id]={};
+        if(!votes[id][key]) votes[id][key]={...sc,votes:0,status:sc.s};
+        votes[id][key].votes++;
+        // se alguma fonte diz live, prioriza
+        if(sc.s==='live') votes[id][key].status='live';
+      });
+    });
+    let total=0;
+    Object.entries(votes).forEach(([id,map])=>{
+      const winner=Object.values(map).sort((a,b)=>b.votes-a.votes)[0];
+      R[+id]={h:winner.h,a:winner.a,s:winner.status};
+      total++;
+    });
+    const okNames=ok_.map(s=>s.src).join(' + ');
+    const msg=ok_.length+'/4 fontes OK ('+okNames+') · '+total+' jogos actualizados · '+ts+' · auto 2h';
+    setMsg('OK — '+msg);
+    if(fail_.length) log('Offline: '+fail_.join(', '),'er');
+    setDot('ok');
   }
-
   btn.disabled=false; sp.classList.remove('on');
   render();
   clearTimeout(tmr);
-  tmr=setTimeout(fetchResults,2*60*60*1e3); // 2 horas
+  tmr=setTimeout(fetchResults,2*60*60*1e3);
 }
 function doRefresh(){clearTimeout(tmr);fetchResults()}
 
