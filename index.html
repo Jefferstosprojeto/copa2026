@@ -110,6 +110,78 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #fi{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;padding:10px 16px}
 #fi::-webkit-scrollbar{display:none}
 .fb{flex-shrink:0}
+
+/* ── ABAS ─────────────────────────────── */
+#tabs{background:#161616;border-bottom:1px solid #1e1e1e;
+  display:flex;padding:0 16px;gap:0}
+.tab{padding:11px 20px;font-size:13px;font-weight:600;color:#555;
+  cursor:pointer;border-bottom:2px solid transparent;
+  transition:all .2s;white-space:nowrap;letter-spacing:.3px}
+.tab:hover{color:#888}
+.tab.on{color:var(--ouro);border-bottom-color:var(--ouro)}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
+/* ── GRUPOS ──────────────────────────── */
+#grupos-wrap{max-width:920px;margin:0 auto;padding:16px 14px 60px}
+.grupos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.grupo-card{background:var(--bg3);border:1px solid #282828;border-radius:8px;overflow:hidden}
+.grupo-titulo{
+  background:linear-gradient(135deg,var(--verde),var(--v2));
+  padding:10px 14px;
+  font-family:'Bebas Neue',cursive;
+  font-size:16px;letter-spacing:2px;color:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.grupo-titulo span{font-size:11px;color:rgba(255,255,255,.5);font-family:'Inter',sans-serif;letter-spacing:0;font-weight:400}
+.grupo-table{width:100%;border-collapse:collapse}
+.grupo-table th{
+  font-size:9px;font-weight:700;letter-spacing:1px;
+  color:#555;text-transform:uppercase;
+  padding:6px 8px;text-align:center;border-bottom:1px solid #222;
+}
+.grupo-table th.left{text-align:left}
+.grupo-table td{
+  padding:7px 8px;font-size:12px;text-align:center;
+  border-bottom:1px solid #1a1a1a;color:#bbb;
+}
+.grupo-table td.left{text-align:left;display:flex;align-items:center;gap:8px}
+.grupo-table tr:last-child td{border-bottom:none}
+.grupo-table tr.qualif td{color:#fff}
+.grupo-table tr.qualif td.left .tname-g{font-weight:600}
+.grupo-table tr.elim td{opacity:.5}
+.grupo-table .pts{font-weight:700;color:#fff;font-size:13px}
+.grupo-table .pts.top{color:var(--ouro)}
+.flag-sm{font-size:16px;line-height:1}
+.pos-num{font-size:10px;color:#444;width:14px;text-align:right;flex-shrink:0}
+.qualif-bar{width:3px;height:28px;border-radius:2px;flex-shrink:0;margin-left:2px}
+.bar-q{background:var(--v3)}
+.bar-m{background:var(--ouro)}
+.bar-e{background:transparent}
+.grupo-legend{padding:8px 12px;font-size:10px;color:#444;
+  display:flex;gap:12px;border-top:1px solid #1a1a1a;flex-wrap:wrap}
+.grupo-legend span{display:flex;align-items:center;gap:4px}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+/* ── JOGOS DO GRUPO (mini) ─────────────── */
+.grupo-matches{border-top:1px solid #1a1a1a}
+.gmatch{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid #161616;font-size:11px;
+}
+.gmatch:last-child{border-bottom:none}
+.gmatch .gteams{display:flex;align-items:center;gap:6px;flex:1}
+.gmatch .gt{color:#999;font-size:10px;text-transform:uppercase;letter-spacing:.3px}
+.gmatch .gt.hl{color:#fff;font-weight:600}
+.gmatch .gscore{
+  font-family:'Bebas Neue',cursive;font-size:16px;
+  color:#fff;min-width:36px;text-align:center;
+}
+.gmatch .gscore.pending{color:#2a2a2a;font-size:12px}
+.gmatch .gtime{font-size:10px;color:#444;min-width:36px;text-align:right}
+.gmatch.br-game{border-left:2px solid var(--br)}
+.gmatch.pt-game{border-left:2px solid var(--pt)}
+
 @media(max-width:580px){
   .ci{grid-template-columns:60px 1fr}
   .vn{display:none}
@@ -159,7 +231,28 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
   <button class="fb"     onclick="setF('mm',this)">&#127942; Mata-Mata</button>
 </div>
 
+<!-- ABAS -->
+<div id="tabs">
+  <div class="tab on" onclick="switchTab('calendario',this)">📅 Calendário</div>
+  <div class="tab"    onclick="switchTab('grupos',this)">🏆 Grupos</div>
+</div>
+
+<!-- PAINEL CALENDÁRIO -->
+<div id="tab-calendario" class="tab-panel on">
 <div id="main"><div class="empty">A carregar...</div></div>
+</div><!-- /tab-calendario -->
+
+<!-- PAINEL GRUPOS -->
+<div id="tab-grupos" class="tab-panel">
+  <div id="grupos-wrap">
+    <div id="grupos-grid" class="grupos-grid">
+      <div style="color:#444;padding:40px;text-align:center;grid-column:1/-1">
+        A carregar grupos...
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-grupos -->
+
 <div id="apiLog"></div>
 <footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; Fonte: <span>openfootball/worldcup.json (GitHub raw · sem CORS)</span> &nbsp;&middot;&nbsp; Hardcoded verificado como fallback &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
 
@@ -404,6 +497,7 @@ async function fetchResults(){
 
   btn.disabled=false; sp.classList.remove('on');
   render();
+  renderGrupos();
   clearTimeout(tmr);
   tmr=setTimeout(fetchResults,2*60*60*1e3);
 }
@@ -467,9 +561,166 @@ function render(){
   main.innerHTML=html;
 }
 
+
+/* ════════════════════════════════════════════
+   LÓGICA DE GRUPOS
+════════════════════════════════════════════ */
+
+// Mapa grupo → seleção (2 passam direto + 2 melhores 3os)
+const GROUP_FLAGS = {
+  'A':{'México':'🇲🇽','Coreia do Sul':'🇰🇷','Rep. Checa':'🇨🇿','África do Sul':'🇿🇦'},
+  'B':{'Canadá':'🇨🇦','Qatar':'🇶🇦','Suíça':'🇨🇭','Bósnia-Herz.':'🇧🇦'},
+  'C':{'Brasil':'🇧🇷','Marrocos':'🇲🇦','Escócia':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Haiti':'🇭🇹'},
+  'D':{'EUA':'🇺🇸','Turquia':'🇹🇷','Austrália':'🇦🇺','Paraguai':'🇵🇾'},
+  'E':{'Alemanha':'🇩🇪','Costa do Marfim':'🇨🇮','Equador':'🇪🇨','Curaçao':'🇨🇼'},
+  'F':{'Países Baixos':'🇳🇱','Japão':'🇯🇵','Suécia':'🇸🇪','Tunísia':'🇹🇳'},
+  'G':{'Bélgica':'🇧🇪','Irã':'🇮🇷','Nova Zelândia':'🇳🇿','Egito':'🇪🇬'},
+  'H':{'Espanha':'🇪🇸','Arábia Saudita':'🇸🇦','Uruguai':'🇺🇾','Cabo Verde':'🇨🇻'},
+  'I':{'França':'🇫🇷','Senegal':'🇸🇳','Noruega':'🇳🇴','Iraque':'🇮🇶'},
+  'J':{'Argentina':'🇦🇷','Áustria':'🇦🇹','Argélia':'🇩🇿','Jordânia':'🇯🇴'},
+  'K':{'Portugal':'🇵🇹','Colômbia':'🇨🇴','Uzbequistão':'🇺🇿','Congo RD':'🇨🇩'},
+  'L':{'Inglaterra':'🏴󠁧󠁢󠁥󠁮󠁧󠁿','Croácia':'🇭🇷','Gana':'🇬🇭','Panamá':'🇵🇦'},
+};
+
+function computeGroups(){
+  const stats = {};
+  // Inicializar todos os times
+  Object.entries(GROUP_FLAGS).forEach(([grp,teams])=>{
+    Object.keys(teams).forEach(team=>{
+      stats[team]={grp,j:0,v:0,e:0,d:0,gf:0,gc:0,pts:0};
+    });
+  });
+
+  // Processar jogos com resultado
+  M.filter(m=>m.p==='G').forEach(m=>{
+    const r=R[m.id];
+    if(!r||r.h===undefined) return;
+    const ht=m.h, at=m.a;
+    if(!stats[ht]||!stats[at]) return;
+    stats[ht].j++; stats[at].j++;
+    stats[ht].gf+=r.h; stats[ht].gc+=r.a;
+    stats[at].gf+=r.a; stats[at].gc+=r.h;
+    if(r.h>r.a){
+      stats[ht].v++; stats[ht].pts+=3;
+      stats[at].d++;
+    } else if(r.h<r.a){
+      stats[at].v++; stats[at].pts+=3;
+      stats[ht].d++;
+    } else {
+      stats[ht].e++; stats[ht].pts++;
+      stats[at].e++; stats[at].pts++;
+    }
+  });
+  return stats;
+}
+
+function sortGroup(teams, stats){
+  return [...teams].sort((a,b)=>{
+    const sa=stats[a], sb=stats[b];
+    if(sb.pts!==sa.pts) return sb.pts-sa.pts;
+    const dgA=sa.gf-sa.gc, dgB=sb.gf-sb.gc;
+    if(dgB!==dgA) return dgB-dgA;
+    return sb.gf-sa.gf;
+  });
+}
+
+function renderGrupos(){
+  const stats = computeGroups();
+  const grid = document.getElementById('grupos-grid');
+  let html='';
+
+  Object.entries(GROUP_FLAGS).forEach(([grp,flagMap])=>{
+    const teams=Object.keys(flagMap);
+    const sorted=sortGroup(teams,stats);
+
+    // Mini-jogos do grupo
+    const groupMatches=M.filter(m=>m.g===grp&&m.p==='G');
+
+    html+=`<div class="grupo-card">
+      <div class="grupo-titulo">
+        GRUPO ${grp}
+        <span>${teams.length} equipas · ${groupMatches.length} jogos</span>
+      </div>
+      <table class="grupo-table">
+        <thead><tr>
+          <th class="left" colspan="2">Equipa</th>
+          <th>J</th><th>V</th><th>E</th><th>D</th>
+          <th>GM</th><th>GS</th><th>DG</th><th>Pts</th>
+        </tr></thead>
+        <tbody>`;
+
+    sorted.forEach((team,i)=>{
+      const s=stats[team]||{j:0,v:0,e:0,d:0,gf:0,gc:0,pts:0};
+      const dg=(s.gf-s.gc)>0?'+'+( s.gf-s.gc):(s.gf-s.gc);
+      const isQ=i<2;   // top 2 qualificam direto
+      const isBR=team==='Brasil'||team==='Portugal';
+      const rowCls=isQ?'qualif':'elim';
+      const barCls=i===0?'bar-q':i===1?'bar-m':'bar-e';
+      const ptsCls=i===0?'pts top':'pts';
+      const flag=flagMap[team]||'⚽';
+      const hlCls=isBR?'hl':'';
+      html+=`<tr class="${rowCls}">
+        <td class="left">
+          <div class="qualif-bar ${barCls}"></div>
+          <span class="pos-num">${i+1}</span>
+          <span class="flag-sm">${flag}</span>
+          <span class="tname-g ${hlCls}">${team}</span>
+        </td>
+        <td></td>
+        <td>${s.j}</td><td>${s.v}</td><td>${s.e}</td><td>${s.d}</td>
+        <td>${s.gf}</td><td>${s.gc}</td><td>${dg}</td>
+        <td class="${ptsCls}">${s.pts}</td>
+      </tr>`;
+    });
+
+    html+=`</tbody></table>
+      <div class="grupo-matches">`;
+
+    groupMatches.forEach(m=>{
+      const r=R[m.id];
+      const isBR=m.hl==='br'?'br-game':m.hl==='pt'?'pt-game':'';
+      const hlH=m.h==='Brasil'||m.h==='Portugal'?'hl':'';
+      const hlA=m.a==='Brasil'||m.a==='Portugal'?'hl':'';
+      let scoreHtml='';
+      if(r?.h!==undefined){
+        scoreHtml=`<span class="gscore">${r.h}–${r.a}</span>`;
+      } else {
+        scoreHtml=`<span class="gscore pending">${m.t}</span>`;
+      }
+      html+=`<div class="gmatch ${isBR}">
+        <div class="gteams">
+          <span class="gt ${hlH}">${m.hf} ${m.h}</span>
+          ${scoreHtml}
+          <span class="gt ${hlA}">${m.a} ${m.af}</span>
+        </div>
+        <span class="gtime">${r?.h!==undefined?'FIM':m.t}</span>
+      </div>`;
+    });
+
+    html+=`</div>
+      <div class="grupo-legend">
+        <span><div class="leg-dot" style="background:var(--v3)"></div>Apura direto</span>
+        <span><div class="leg-dot" style="background:var(--ouro)"></div>Possível apurado</span>
+      </div>
+    </div>`;
+  });
+
+  grid.innerHTML=html;
+}
+
+/* ── Troca de abas ─────────────────────── */
+function switchTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-'+id).classList.add('on');
+  if(id==='grupos') renderGrupos();
+}
+
 /* INIT */
 Object.assign(R,HC);
 render();
+renderGrupos();
 fetchResults();
 </script>
 </body>
