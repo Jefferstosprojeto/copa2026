@@ -354,10 +354,10 @@ const M=[
   {id:90, d:"2026-07-04",t:"18:00",g:"Oitavas",  h:"Canadá",      hf:"🇨🇦",a:"Marrocos",        af:"🇲🇦",v:"Houston",         p:"M"},
   {id:91, d:"2026-07-05",t:"21:00",g:"Oitavas",  h:"Brasil",      hf:"🇧🇷",a:"Noruega",          af:"🇳🇴",v:"Nova York/NJ",   p:"M",hl:"br"},
   {id:92, d:"2026-07-06",t:"01:00",g:"Oitavas",  h:"México",      hf:"🇲🇽",a:"Inglaterra",       af:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",v:"Cidade do México",p:"M"},
-  {id:93, d:"2026-07-06",t:"20:00",g:"Oitavas",  h:"Port./Croácia",hf:"⚽",a:"Esp./Áustria",    af:"⚽",v:"Dallas",          p:"M"},
+  {id:93, d:"2026-07-06",t:"20:00",g:"Oitavas",  h:"Portugal",    hf:"🇵🇹",a:"Espanha",          af:"🇪🇸",v:"Dallas",          p:"M",hl:"pt"},
   {id:94, d:"2026-07-07",t:"01:00",g:"Oitavas",  h:"EUA",         hf:"🇺🇸",a:"Bélgica",          af:"🇧🇪",v:"Seattle",         p:"M"},
-  {id:95, d:"2026-07-07",t:"17:00",g:"Oitavas",  h:"Arg./C.Verde",hf:"⚽",a:"Aust./Egito",      af:"⚽",v:"Atlanta",         p:"M"},
-  {id:96, d:"2026-07-07",t:"21:00",g:"Oitavas",  h:"Suíça/Argélia",hf:"⚽",a:"Col./Gana",       af:"⚽",v:"Vancouver",       p:"M"},
+  {id:95, d:"2026-07-07",t:"17:00",g:"Oitavas",  h:"Argentina",   hf:"🇦🇷",a:"Austrália",        af:"🇦🇺",v:"Atlanta",         p:"M"},
+  {id:96, d:"2026-07-07",t:"21:00",g:"Oitavas",  h:"Suíça",       hf:"🇨🇭",a:"Colômbia",         af:"🇨🇴",v:"Vancouver",       p:"M"},
   // ── QUARTAS — horários hora Portugal (A Bola / FIFA) ──────────────
   {id:97, d:"2026-07-09",t:"21:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Boston",          p:"M"},
   {id:98, d:"2026-07-10",t:"20:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Los Angeles",     p:"M"},
@@ -371,70 +371,78 @@ const M=[
   {id:104,d:"2026-07-19",t:"20:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
 ];
 
-/* Resultados hardcoded — openfootball verificado 29/06/2026 */
+/* Resultados hardcoded — openfootball verificado 06/07/2026 */
 const HC={
-  // Grupo A
+  // ── Grupo A
   1:{h:2,a:0,s:'fim'}, 2:{h:2,a:1,s:'fim'},
   25:{h:1,a:1,s:'fim'}, 28:{h:1,a:0,s:'fim'},
   53:{h:0,a:3,s:'fim'}, 54:{h:1,a:0,s:'fim'},
-  // Grupo B
+  // ── Grupo B
   3:{h:1,a:1,s:'fim'}, 5:{h:1,a:1,s:'fim'},
   26:{h:4,a:1,s:'fim'}, 27:{h:6,a:0,s:'fim'},
   49:{h:2,a:1,s:'fim'}, 50:{h:3,a:1,s:'fim'},
-  // Grupo C
+  // ── Grupo C
   6:{h:1,a:1,s:'fim'}, 7:{h:0,a:1,s:'fim'},
   30:{h:0,a:1,s:'fim'}, 31:{h:3,a:0,s:'fim'},
   51:{h:0,a:3,s:'fim'}, 52:{h:4,a:2,s:'fim'},
-  // Grupo D
+  // ── Grupo D
   4:{h:4,a:1,s:'fim'}, 8:{h:2,a:0,s:'fim'},
   29:{h:2,a:0,s:'fim'}, 32:{h:0,a:1,s:'fim'},
   59:{h:3,a:2,s:'fim'}, 60:{h:0,a:0,s:'fim'},
-  // Grupo E
+  // ── Grupo E
   9:{h:7,a:1,s:'fim'}, 11:{h:1,a:0,s:'fim'},
   34:{h:2,a:1,s:'fim'}, 35:{h:0,a:0,s:'fim'},
   55:{h:0,a:2,s:'fim'}, 56:{h:2,a:1,s:'fim'},
-  // Grupo F
+  // ── Grupo F
   10:{h:2,a:2,s:'fim'}, 12:{h:5,a:1,s:'fim'},
   33:{h:5,a:1,s:'fim'}, 36:{h:0,a:4,s:'fim'},
   57:{h:1,a:1,s:'fim'}, 58:{h:1,a:3,s:'fim'},
-  // Grupo G
+  // ── Grupo G
   14:{h:1,a:1,s:'fim'}, 16:{h:2,a:2,s:'fim'},
   38:{h:0,a:0,s:'fim'}, 40:{h:1,a:3,s:'fim'},
   65:{h:1,a:1,s:'fim'}, 66:{h:1,a:5,s:'fim'},
-  // Grupo H
+  // ── Grupo H
   13:{h:0,a:0,s:'fim'}, 15:{h:1,a:1,s:'fim'},
   37:{h:4,a:0,s:'fim'}, 39:{h:2,a:2,s:'fim'},
   63:{h:0,a:0,s:'fim'}, 64:{h:0,a:1,s:'fim'},
-  // Grupo I
+  // ── Grupo I
   17:{h:3,a:1,s:'fim'}, 18:{h:1,a:4,s:'fim'},
   42:{h:3,a:0,s:'fim'}, 43:{h:3,a:2,s:'fim'},
   61:{h:1,a:4,s:'fim'}, 62:{h:5,a:0,s:'fim'},
-  // Grupo J
+  // ── Grupo J
   19:{h:3,a:0,s:'fim'}, 20:{h:3,a:1,s:'fim'},
   41:{h:2,a:0,s:'fim'}, 44:{h:1,a:2,s:'fim'},
   71:{h:3,a:3,s:'fim'}, 72:{h:1,a:3,s:'fim'},
-  // Grupo K
+  // ── Grupo K
   21:{h:1,a:1,s:'fim'}, 24:{h:1,a:3,s:'fim'},
   45:{h:5,a:0,s:'fim'}, 48:{h:1,a:0,s:'fim'},
   69:{h:0,a:0,s:'fim'}, 70:{h:3,a:1,s:'fim'},
-  // Grupo L
+  // ── Grupo L
   22:{h:4,a:2,s:'fim'}, 23:{h:1,a:0,s:'fim'},
   46:{h:0,a:0,s:'fim'}, 47:{h:0,a:1,s:'fim'},
   67:{h:0,a:2,s:'fim'}, 68:{h:2,a:1,s:'fim'},
-  // R32
-  // R32 resultados
+  // ── R32
   73:{h:0,a:1,s:'fim'},  // África do Sul 0-1 Canadá
   74:{h:2,a:1,s:'fim'},  // Brasil 2-1 Japão
-  75:{h:1,a:1,s:'fim'},  // Alemanha 1-1 (3-4 pen.) Paraguai → nota: Paraguai passa
-  76:{h:1,a:1,s:'fim'},  // Países Baixos 1-1 (2-3 pen.) Marrocos → Marrocos passa
+  75:{h:1,a:1,s:'fim'},  // Alemanha 1-1 Paraguai (pen.)
+  76:{h:1,a:1,s:'fim'},  // Países Baixos 1-1 Marrocos (pen.)
   77:{h:1,a:2,s:'fim'},  // Costa do Marfim 1-2 Noruega
   78:{h:3,a:0,s:'fim'},  // França 3-0 Suécia
   79:{h:2,a:0,s:'fim'},  // México 2-0 Equador
   80:{h:2,a:1,s:'fim'},  // Inglaterra 2-1 Congo RD
-  82:{h:3,a:2,s:'fim'},  // Bélgica 3-2 Senegal (prol.)
   81:{h:2,a:0,s:'fim'},  // EUA 2-0 Bósnia-Herz.
-  84:{h:3,a:0,s:'fim'},  // Espanha 3-0 Áustria
+  82:{h:2,a:2,s:'fim'},  // Bélgica 2-2 Senegal (pen.)
   83:{h:2,a:1,s:'fim'},  // Portugal 2-1 Croácia
+  84:{h:3,a:0,s:'fim'},  // Espanha 3-0 Áustria
+  85:{h:2,a:0,s:'fim'},  // Suíça 2-0 Argélia
+  86:{h:1,a:1,s:'fim'},  // Argentina 1-1 Cabo Verde (pen.)
+  87:{h:1,a:0,s:'fim'},  // Colômbia 1-0 Gana
+  88:{h:1,a:1,s:'fim'},  // Austrália 1-1 Egito (pen.)
+  // ── Oitavas
+  89:{h:0,a:1,s:'fim'},  // Paraguai 0-1 França
+  90:{h:0,a:3,s:'fim'},  // Canadá 0-3 Marrocos
+  91:{h:1,a:2,s:'fim'},  // Brasil 1-2 Noruega
+  92:{h:2,a:3,s:'fim'},  // México 2-3 Inglaterra
 };
 
 let R={...HC}, FILT='all', tmr=null;
