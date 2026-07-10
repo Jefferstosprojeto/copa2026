@@ -356,13 +356,13 @@ const M=[
   {id:92, d:"2026-07-06",t:"01:00",g:"Oitavas",  h:"México",      hf:"🇲🇽",a:"Inglaterra",       af:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",v:"Cidade do México",p:"M"},
   {id:93, d:"2026-07-06",t:"20:00",g:"Oitavas",  h:"Portugal",    hf:"🇵🇹",a:"Espanha",          af:"🇪🇸",v:"Dallas",          p:"M",hl:"pt"},
   {id:94, d:"2026-07-07",t:"01:00",g:"Oitavas",  h:"EUA",         hf:"🇺🇸",a:"Bélgica",          af:"🇧🇪",v:"Seattle",         p:"M"},
-  {id:95, d:"2026-07-07",t:"17:00",g:"Oitavas",  h:"Argentina",   hf:"🇦🇷",a:"Austrália",        af:"🇦🇺",v:"Atlanta",         p:"M"},
+  {id:95, d:"2026-07-07",t:"17:00",g:"Oitavas",  h:"Argentina",   hf:"🇦🇷",a:"Egito",            af:"🇪🇬",v:"Atlanta",         p:"M"},
   {id:96, d:"2026-07-07",t:"21:00",g:"Oitavas",  h:"Suíça",       hf:"🇨🇭",a:"Colômbia",         af:"🇨🇴",v:"Vancouver",       p:"M"},
   // ── QUARTAS — horários hora Portugal (A Bola / FIFA) ──────────────
-  {id:97, d:"2026-07-09",t:"21:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Boston",          p:"M"},
-  {id:98, d:"2026-07-10",t:"20:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Los Angeles",     p:"M"},
-  {id:99, d:"2026-07-12",t:"22:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Miami",           p:"M"},
-  {id:100,d:"2026-07-13",t:"02:00",g:"Quartas",  h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Kansas City",     p:"M"},
+  {id:97, d:"2026-07-09",t:"21:00",g:"Quartas",  h:"França",      hf:"🇫🇷",a:"Marrocos",         af:"🇲🇦",v:"Boston",          p:"M"},
+  {id:98, d:"2026-07-10",t:"20:00",g:"Quartas",  h:"Noruega",     hf:"🇳🇴",a:"Inglaterra",       af:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",v:"Los Angeles",    p:"M"},
+  {id:99, d:"2026-07-12",t:"22:00",g:"Quartas",  h:"Espanha",     hf:"🇪🇸",a:"Bélgica",          af:"🇧🇪",v:"Miami",           p:"M"},
+  {id:100,d:"2026-07-13",t:"02:00",g:"Quartas",  h:"Argentina",   hf:"🇦🇷",a:"Colômbia",         af:"🇨🇴",v:"Kansas City",     p:"M"},
   // ── SEMIFINAIS — hora Portugal ────────────────────────────────────
   {id:101,d:"2026-07-14",t:"20:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
   {id:102,d:"2026-07-15",t:"20:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Atlanta",         p:"M"},
@@ -371,7 +371,7 @@ const M=[
   {id:104,d:"2026-07-19",t:"20:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
 ];
 
-/* Resultados hardcoded — openfootball verificado 06/07/2026 */
+/* Resultados hardcoded — openfootball verificado 10/07/2026 */
 const HC={
   // ── Grupo A
   1:{h:2,a:0,s:'fim'}, 2:{h:2,a:1,s:'fim'},
@@ -443,6 +443,12 @@ const HC={
   90:{h:0,a:3,s:'fim'},  // Canadá 0-3 Marrocos
   91:{h:1,a:2,s:'fim'},  // Brasil 1-2 Noruega
   92:{h:2,a:3,s:'fim'},  // México 2-3 Inglaterra
+  93:{h:0,a:1,s:'fim'},  // Portugal 0-1 Espanha
+  94:{h:1,a:4,s:'fim'},  // EUA 1-4 Bélgica
+  95:{h:3,a:2,s:'fim'},  // Argentina 3-2 Egito
+  96:{h:0,a:0,s:'fim'},  // Suíça 0-0 Colômbia (pen.)
+  // ── Quartas
+  97:{h:2,a:0,s:'fim'},  // França 2-0 Marrocos
 };
 
 let R={...HC}, FILT='all', tmr=null;
