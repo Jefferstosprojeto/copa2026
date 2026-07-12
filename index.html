@@ -512,8 +512,8 @@ const HC={
   // ── Quartas
   97:{h:2,a:0,s:'fim'},  // França 2-0 Marrocos
   99:{h:2,a:1,s:'fim'},  // Espanha 2-1 Bélgica
-  98:{h:1,a:1,s:'fim'},  // Noruega 1-1 Inglaterra (pen.)
-  100:{h:1,a:1,s:'fim'}, // Argentina 1-1 Suíça (pen.)
+  98:{h:1,a:2,s:'fim'},  // Noruega 1-2 Inglaterra (prorrogação)
+  100:{h:3,a:1,s:'fim'}, // Argentina 3-1 Suíça (prorrogação)
 };
 
 let R={...HC}, FILT='all', tmr=null;
@@ -842,8 +842,8 @@ const BRACKET = {
   qf: [
     {id:97,  date:'09 Jul 21h', h:{f:'🇫🇷',n:'França',     s:2,w:true},  a:{f:'🇲🇦',n:'Marrocos',   s:0,w:false}},
     {id:99,  date:'10 Jul 20h', h:{f:'🇪🇸',n:'Espanha',    s:2,w:true},  a:{f:'🇧🇪',n:'Bélgica',    s:1,w:false}},
-    {id:98,  date:'11 Jul 20h', h:{f:'🇳🇴',n:'Noruega',    s:1,w:null,pen:true},  a:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:1,w:null}},
-    {id:100, date:'12 Jul 20h', h:{f:'🇦🇷',n:'Argentina',  s:1,w:null,pen:true},  a:{f:'🇨🇭',n:'Suíça',      s:1,w:null}},
+    {id:98,  date:'11 Jul 20h', h:{f:'🇳🇴',n:'Noruega',    s:1,w:false}, a:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:2,w:true,pror:true}},
+    {id:100, date:'12 Jul 20h', h:{f:'🇦🇷',n:'Argentina',  s:3,w:true,pror:true}, a:{f:'🇨🇭',n:'Suíça',      s:1,w:false}},
   ],
   // Semifinais
   sf: [
@@ -859,7 +859,7 @@ const BRACKET = {
 function bTeam(t, isPen){
   const wCls = t.w===true?'winner':t.w===false?'loser':'';
   const score = t.s!==null ? t.s : '–';
-  const pen = isPen && t.w===true ? ' <span style="font-size:9px;color:var(--ouro)">(pen.)</span>' : '';
+  const pen = (isPen||t.pror) && t.w===true ? ' <span style="font-size:9px;color:var(--ouro)">(p.e.)</span>' : '';
   return `<div class="b-team ${wCls}">
     <span class="bf">${t.f}</span>
     <span class="bn">${t.n}${pen}</span>
