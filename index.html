@@ -105,6 +105,72 @@ h1 em{color:var(--ouro);font-style:normal}
 
 footer{text-align:center;padding:16px;font-size:11px;color:#2a2a2a;border-top:1px solid #181818}
 footer span{color:#333}
+/* ── BRACKET / CHAVES ──────────────────── */
+#bracket-wrap{max-width:1100px;margin:0 auto;padding:16px 14px 60px;overflow-x:auto}
+.bracket{display:flex;gap:0;align-items:flex-start;min-width:900px}
+.bracket-col{display:flex;flex-direction:column;flex:1;min-width:160px}
+.bracket-col-title{
+  font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:2px;
+  color:var(--v3);text-align:center;padding:8px 4px 12px;
+  border-bottom:1px solid #1a1a1a;margin-bottom:8px;
+}
+.bracket-spacer{flex:1}
+.b-match{
+  background:var(--bg3);border:1px solid #282828;border-radius:6px;
+  margin:4px 6px;overflow:hidden;position:relative;
+}
+.b-match.winner-top{border-color:var(--ouro)}
+.b-match.br-game{border-left:2px solid var(--br)}
+.b-match.pt-game{border-left:2px solid var(--pt)}
+.b-team{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 8px;font-size:11px;color:#999;
+  border-bottom:1px solid #1e1e1e;
+}
+.b-team:last-child{border-bottom:none}
+.b-team.winner{color:#fff;font-weight:700;background:rgba(255,255,255,.03)}
+.b-team.loser{opacity:.45}
+.b-team .bf{font-size:14px;flex-shrink:0}
+.b-team .bn{flex:1;text-transform:uppercase;letter-spacing:.3px;font-size:10px}
+.b-team .bs{
+  font-family:'Bebas Neue',cursive;font-size:16px;
+  min-width:18px;text-align:right;color:#fff;
+}
+.b-team.winner .bs{color:var(--ouro)}
+.b-date{font-size:9px;color:#444;text-align:center;padding:3px 0;letter-spacing:.5px}
+.connector{
+  display:flex;align-items:center;justify-content:center;
+  width:20px;flex-shrink:0;
+}
+.connector svg{overflow:visible}
+
+/* FINAL central */
+.bracket-final{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-width:180px;padding:0 8px;
+}
+.final-trophy{
+  font-size:32px;text-align:center;padding:8px 0 4px;
+}
+.final-label{
+  font-family:'Bebas Neue',cursive;font-size:13px;letter-spacing:3px;
+  color:var(--ouro);text-align:center;margin-bottom:8px;
+}
+.final-date{font-size:10px;color:#555;text-align:center;margin-bottom:8px}
+.b-match.final-match{border-color:var(--ouro);box-shadow:0 0 20px rgba(201,162,39,.2);min-width:160px}
+.b-match.final-match .b-team{padding:8px 10px}
+.b-match.final-match .bf{font-size:18px}
+.b-match.final-match .bn{font-size:11px}
+.b-match.final-match .bs{font-size:20px}
+
+/* Mobile */
+@media(max-width:700px){
+  #bracket-wrap{padding:12px 0 60px}
+  .bracket{min-width:700px}
+  .bracket-col{min-width:130px}
+  .b-team .bn{font-size:9px}
+}
+
 /* Mobile touch improvements */
 button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 #fi{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap;padding:10px 16px}
@@ -235,6 +301,7 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 <div id="tabs">
   <div class="tab on" onclick="switchTab('calendario',this)">📅 Calendário</div>
   <div class="tab"    onclick="switchTab('grupos',this)">🏆 Grupos</div>
+  <div class="tab"    onclick="switchTab('bracket',this)">🔗 Chaves</div>
 </div>
 
 <!-- PAINEL CALENDÁRIO -->
@@ -252,6 +319,13 @@ button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
     </div>
   </div>
 </div><!-- /tab-grupos -->
+
+<!-- PAINEL CHAVES -->
+<div id="tab-bracket" class="tab-panel">
+  <div id="bracket-wrap">
+    <div id="bracket-container"></div>
+  </div>
+</div>
 
 <div id="apiLog"></div>
 <footer>Hora de Portugal (WEST = UTC+1) &nbsp;&middot;&nbsp; Fonte: <span>openfootball/worldcup.json (GitHub raw · sem CORS)</span> &nbsp;&middot;&nbsp; Hardcoded verificado como fallback &nbsp;&middot;&nbsp; Auto-atualiza&#231;&atilde;o a cada 2h</footer>
@@ -364,14 +438,14 @@ const M=[
   {id:99, d:"2026-07-10",t:"20:00",g:"Quartas",  h:"Espanha",     hf:"🇪🇸",a:"Bélgica",          af:"🇧🇪",v:"Miami",           p:"M"},
   {id:100,d:"2026-07-12",t:"20:00",g:"Quartas",  h:"Argentina",   hf:"🇦🇷",a:"Suíça",            af:"🇨🇭",v:"Kansas City",     p:"M"},
   // ── SEMIFINAIS — hora Portugal ────────────────────────────────────
-  {id:101,d:"2026-07-14",t:"20:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Dallas",          p:"M"},
-  {id:102,d:"2026-07-15",t:"20:00",g:"Semi",     h:"A definir",hf:"⚽",a:"A definir",af:"⚽",v:"Atlanta",         p:"M"},
+  {id:101,d:"2026-07-14",t:"20:00",g:"Semi",     h:"França",      hf:"🇫🇷",a:"Espanha",          af:"🇪🇸",v:"Dallas",          p:"M"},
+  {id:102,d:"2026-07-15",t:"20:00",g:"Semi",     h:"Inglaterra",  hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",a:"Argentina",       af:"🇦🇷",v:"Atlanta",         p:"M"},
   // ── 3º LUGAR + FINAL — hora Portugal ─────────────────────────────
   {id:103,d:"2026-07-18",t:"22:00",g:"3.Lugar",  h:"A definir",hf:"🥉",a:"A definir",af:"🥉",v:"Miami",          p:"M"},
   {id:104,d:"2026-07-19",t:"20:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
 ];
 
-/* Resultados hardcoded — openfootball verificado 10/07/2026 */
+/* Resultados hardcoded — openfootball verificado 12/07/2026 */
 const HC={
   // ── Grupo A
   1:{h:2,a:0,s:'fim'}, 2:{h:2,a:1,s:'fim'},
@@ -422,33 +496,24 @@ const HC={
   46:{h:0,a:0,s:'fim'}, 47:{h:0,a:1,s:'fim'},
   67:{h:0,a:2,s:'fim'}, 68:{h:2,a:1,s:'fim'},
   // ── R32
-  73:{h:0,a:1,s:'fim'},  // África do Sul 0-1 Canadá
-  74:{h:2,a:1,s:'fim'},  // Brasil 2-1 Japão
-  75:{h:1,a:1,s:'fim'},  // Alemanha 1-1 Paraguai (pen.)
-  76:{h:1,a:1,s:'fim'},  // Países Baixos 1-1 Marrocos (pen.)
-  77:{h:1,a:2,s:'fim'},  // Costa do Marfim 1-2 Noruega
-  78:{h:3,a:0,s:'fim'},  // França 3-0 Suécia
-  79:{h:2,a:0,s:'fim'},  // México 2-0 Equador
-  80:{h:2,a:1,s:'fim'},  // Inglaterra 2-1 Congo RD
-  81:{h:2,a:0,s:'fim'},  // EUA 2-0 Bósnia-Herz.
-  82:{h:2,a:2,s:'fim'},  // Bélgica 2-2 Senegal (pen.)
-  83:{h:2,a:1,s:'fim'},  // Portugal 2-1 Croácia
-  84:{h:3,a:0,s:'fim'},  // Espanha 3-0 Áustria
-  85:{h:2,a:0,s:'fim'},  // Suíça 2-0 Argélia
-  86:{h:1,a:1,s:'fim'},  // Argentina 1-1 Cabo Verde (pen.)
-  87:{h:1,a:0,s:'fim'},  // Colômbia 1-0 Gana
-  88:{h:1,a:1,s:'fim'},  // Austrália 1-1 Egito (pen.)
+  73:{h:0,a:1,s:'fim'}, 74:{h:2,a:1,s:'fim'},
+  75:{h:1,a:1,s:'fim'}, 76:{h:1,a:1,s:'fim'},
+  77:{h:1,a:2,s:'fim'}, 78:{h:3,a:0,s:'fim'},
+  79:{h:2,a:0,s:'fim'}, 80:{h:2,a:1,s:'fim'},
+  81:{h:2,a:0,s:'fim'}, 82:{h:2,a:2,s:'fim'},
+  83:{h:2,a:1,s:'fim'}, 84:{h:3,a:0,s:'fim'},
+  85:{h:2,a:0,s:'fim'}, 86:{h:1,a:1,s:'fim'},
+  87:{h:1,a:0,s:'fim'}, 88:{h:1,a:1,s:'fim'},
   // ── Oitavas
-  89:{h:0,a:1,s:'fim'},  // Paraguai 0-1 França
-  90:{h:0,a:3,s:'fim'},  // Canadá 0-3 Marrocos
-  91:{h:1,a:2,s:'fim'},  // Brasil 1-2 Noruega
-  92:{h:2,a:3,s:'fim'},  // México 2-3 Inglaterra
-  93:{h:0,a:1,s:'fim'},  // Portugal 0-1 Espanha
-  94:{h:1,a:4,s:'fim'},  // EUA 1-4 Bélgica
-  95:{h:3,a:2,s:'fim'},  // Argentina 3-2 Egito
-  96:{h:0,a:0,s:'fim'},  // Suíça 0-0 Colômbia (pen.)
+  89:{h:0,a:1,s:'fim'}, 90:{h:0,a:3,s:'fim'},
+  91:{h:1,a:2,s:'fim'}, 92:{h:2,a:3,s:'fim'},
+  93:{h:0,a:1,s:'fim'}, 94:{h:1,a:4,s:'fim'},
+  95:{h:3,a:2,s:'fim'}, 96:{h:0,a:0,s:'fim'},
   // ── Quartas
   97:{h:2,a:0,s:'fim'},  // França 2-0 Marrocos
+  99:{h:2,a:1,s:'fim'},  // Espanha 2-1 Bélgica
+  98:{h:1,a:1,s:'fim'},  // Noruega 1-1 Inglaterra (pen.)
+  100:{h:1,a:1,s:'fim'}, // Argentina 1-1 Suíça (pen.)
 };
 
 let R={...HC}, FILT='all', tmr=null;
@@ -557,6 +622,7 @@ async function fetchResults(){
   btn.disabled=false; sp.classList.remove('on');
   render();
   renderGrupos();
+  renderBracket();
   clearTimeout(tmr);
   tmr=setTimeout(fetchResults,2*60*60*1e3);
 }
@@ -767,6 +833,130 @@ function renderGrupos(){
   grid.innerHTML=html;
 }
 
+
+/* ════════════════════════════════════════════
+   MAPA DE CHAVES (BRACKET)
+════════════════════════════════════════════ */
+const BRACKET = {
+  // Quartas
+  qf: [
+    {id:97,  date:'09 Jul 21h', h:{f:'🇫🇷',n:'França',     s:2,w:true},  a:{f:'🇲🇦',n:'Marrocos',   s:0,w:false}},
+    {id:99,  date:'10 Jul 20h', h:{f:'🇪🇸',n:'Espanha',    s:2,w:true},  a:{f:'🇧🇪',n:'Bélgica',    s:1,w:false}},
+    {id:98,  date:'11 Jul 20h', h:{f:'🇳🇴',n:'Noruega',    s:1,w:null,pen:true},  a:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:1,w:null}},
+    {id:100, date:'12 Jul 20h', h:{f:'🇦🇷',n:'Argentina',  s:1,w:null,pen:true},  a:{f:'🇨🇭',n:'Suíça',      s:1,w:null}},
+  ],
+  // Semifinais
+  sf: [
+    {id:101, date:'14 Jul 20h', h:{f:'🇫🇷',n:'França',     s:null,w:null}, a:{f:'🇪🇸',n:'Espanha',   s:null,w:null}},
+    {id:102, date:'15 Jul 20h', h:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:null,w:null}, a:{f:'🇦🇷',n:'Argentina', s:null,w:null}},
+  ],
+  // Final
+  fi: {id:104, date:'19 Jul 20h', h:{f:'⚽',n:'A definir',s:null}, a:{f:'⚽',n:'A definir',s:null}},
+  // 3º Lugar
+  tpl: {id:103, date:'18 Jul 22h', h:{f:'⚽',n:'A definir',s:null}, a:{f:'⚽',n:'A definir',s:null}},
+};
+
+function bTeam(t, isPen){
+  const wCls = t.w===true?'winner':t.w===false?'loser':'';
+  const score = t.s!==null ? t.s : '–';
+  const pen = isPen && t.w===true ? ' <span style="font-size:9px;color:var(--ouro)">(pen.)</span>' : '';
+  return `<div class="b-team ${wCls}">
+    <span class="bf">${t.f}</span>
+    <span class="bn">${t.n}${pen}</span>
+    <span class="bs">${score}</span>
+  </div>`;
+}
+
+function bMatch(m, extraCls=''){
+  const isPen = m.h.pen||m.a.pen||false;
+  const wTop = m.h.w===true;
+  return `<div class="b-match ${wTop?'winner-top':''} ${extraCls}">
+    <div class="b-date">${m.date}</div>
+    ${bTeam(m.h, isPen)}
+    ${bTeam(m.a, isPen)}
+  </div>`;
+}
+
+function renderBracket(){
+  // Atualizar com resultados reais do HC
+  // Quartas
+  if(R[97]){BRACKET.qf[0].h.s=R[97].h;BRACKET.qf[0].a.s=R[97].a;BRACKET.qf[0].h.w=R[97].h>R[97].a;BRACKET.qf[0].a.w=R[97].a>R[97].h}
+  if(R[99]){BRACKET.qf[1].h.s=R[99].h;BRACKET.qf[1].a.s=R[99].a;BRACKET.qf[1].h.w=R[99].h>R[99].a;BRACKET.qf[1].a.w=R[99].a>R[99].h}
+  if(R[98]){BRACKET.qf[2].h.s=R[98].h;BRACKET.qf[2].a.s=R[98].a}
+  if(R[100]){BRACKET.qf[3].h.s=R[100].h;BRACKET.qf[3].a.s=R[100].a}
+  // Semifinais
+  if(R[101]){BRACKET.sf[0].h.s=R[101].h;BRACKET.sf[0].a.s=R[101].a;BRACKET.sf[0].h.w=R[101].h>R[101].a;BRACKET.sf[0].a.w=R[101].a>R[101].h}
+  if(R[102]){BRACKET.sf[1].h.s=R[102].h;BRACKET.sf[1].a.s=R[102].a;BRACKET.sf[1].h.w=R[102].h>R[102].a;BRACKET.sf[1].a.w=R[102].a>R[102].h}
+
+  const el = document.getElementById('bracket-container');
+  el.innerHTML = `
+  <div style="font-family:'Bebas Neue',cursive;font-size:12px;letter-spacing:3px;color:var(--mu);text-align:center;padding:12px 0 20px">
+    COPA DO MUNDO 2026 — MAPA DE CHAVES
+  </div>
+  <div class="bracket">
+
+    <!-- QUARTAS (esquerda) -->
+    <div class="bracket-col">
+      <div class="bracket-col-title">QUARTAS</div>
+      ${bMatch(BRACKET.qf[0])}
+      <div style="height:20px"></div>
+      ${bMatch(BRACKET.qf[1])}
+    </div>
+
+    <!-- SEMI (esquerda) -->
+    <div class="bracket-col">
+      <div class="bracket-col-title">SEMI</div>
+      <div style="height:28px"></div>
+      ${bMatch(BRACKET.sf[0])}
+    </div>
+
+    <!-- FINAL -->
+    <div class="bracket-final">
+      <div class="final-trophy">🏆</div>
+      <div class="final-label">FINAL</div>
+      <div class="final-date">19 Jul · 20h PT</div>
+      <div class="b-match final-match">
+        <div class="b-team ${R[104]&&R[104].h>R[104].a?'winner':''}">
+          <span class="bf">${BRACKET.fi.h.f}</span>
+          <span class="bn">${BRACKET.fi.h.n}</span>
+          <span class="bs">${R[104]&&R[104].h!==undefined?R[104].h:'–'}</span>
+        </div>
+        <div class="b-team ${R[104]&&R[104].a>R[104].h?'winner':''}">
+          <span class="bf">${BRACKET.fi.a.f}</span>
+          <span class="bn">${BRACKET.fi.a.n}</span>
+          <span class="bs">${R[104]&&R[104].a!==undefined?R[104].a:'–'}</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;text-align:center">
+        <div style="font-size:10px;color:var(--mu);letter-spacing:1px;margin-bottom:6px">3º LUGAR</div>
+        <div style="font-size:10px;color:#444">18 Jul · 22h PT · Miami</div>
+        <div class="b-match" style="margin:4px 0 0">
+          <div class="b-team"><span class="bf">${BRACKET.tpl.h.f}</span><span class="bn">${BRACKET.tpl.h.n}</span><span class="bs">–</span></div>
+          <div class="b-team"><span class="bf">${BRACKET.tpl.a.f}</span><span class="bn">${BRACKET.tpl.a.n}</span><span class="bs">–</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEMI (direita) -->
+    <div class="bracket-col">
+      <div class="bracket-col-title">SEMI</div>
+      <div style="height:28px"></div>
+      ${bMatch(BRACKET.sf[1])}
+    </div>
+
+    <!-- QUARTAS (direita) -->
+    <div class="bracket-col">
+      <div class="bracket-col-title">QUARTAS</div>
+      ${bMatch(BRACKET.qf[2],' ')}
+      <div style="height:20px"></div>
+      ${bMatch(BRACKET.qf[3],' ')}
+    </div>
+
+  </div>`;
+}
+
+/* Atualizar switchTab para incluir bracket */
+
 /* ── Troca de abas ─────────────────────── */
 function switchTab(id,btn){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
@@ -774,12 +964,14 @@ function switchTab(id,btn){
   btn.classList.add('on');
   document.getElementById('tab-'+id).classList.add('on');
   if(id==='grupos') renderGrupos();
+  if(id==='bracket') renderBracket();
 }
 
 /* INIT */
 Object.assign(R,HC);
 render();
 renderGrupos();
+renderBracket();
 fetchResults();
 </script>
 </body>
