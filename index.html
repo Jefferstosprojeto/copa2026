@@ -888,33 +888,47 @@ function renderBracket(){
   if(R[101]){BRACKET.sf[0].h.s=R[101].h;BRACKET.sf[0].a.s=R[101].a;BRACKET.sf[0].h.w=R[101].h>R[101].a;BRACKET.sf[0].a.w=R[101].a>R[101].h}
   if(R[102]){BRACKET.sf[1].h.s=R[102].h;BRACKET.sf[1].a.s=R[102].a;BRACKET.sf[1].h.w=R[102].h>R[102].a;BRACKET.sf[1].a.w=R[102].a>R[102].h}
 
+  // Semifinais como texto se não há resultado ainda
+  const sf0label = R[101]&&R[101].h!==undefined
+    ? '' : '<div class="b-date" style="font-size:9px;color:var(--ouro);text-align:center;padding:3px">14 Jul 20h PT · Dallas</div>';
+  const sf1label = R[102]&&R[102].h!==undefined
+    ? '' : '<div class="b-date" style="font-size:9px;color:var(--ouro);text-align:center;padding:3px">15 Jul 20h PT · Atlanta</div>';
+
   const el = document.getElementById('bracket-container');
   el.innerHTML = `
-  <div style="font-family:'Bebas Neue',cursive;font-size:12px;letter-spacing:3px;color:var(--mu);text-align:center;padding:12px 0 20px">
+  <div style="font-family:'Bebas Neue',cursive;font-size:11px;letter-spacing:3px;color:var(--mu);text-align:center;padding:12px 0 16px">
     COPA DO MUNDO 2026 — MAPA DE CHAVES
   </div>
+
+  <!-- LEGENDA -->
+  <div style="display:flex;justify-content:center;gap:20px;font-size:10px;color:#555;margin-bottom:16px;flex-wrap:wrap">
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:var(--ouro);display:inline-block"></span>Vencedor</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="font-size:9px;color:var(--ouro)">(p.e.)</span>Prorrogação</span>
+  </div>
+
   <div class="bracket">
 
-    <!-- QUARTAS (esquerda) -->
+    <!-- QUARTAS esquerda: França×Marrocos | Espanha×Bélgica -->
     <div class="bracket-col">
-      <div class="bracket-col-title">QUARTAS</div>
+      <div class="bracket-col-title">⚽ QUARTAS</div>
       ${bMatch(BRACKET.qf[0])}
-      <div style="height:20px"></div>
+      <div style="height:16px"></div>
       ${bMatch(BRACKET.qf[1])}
     </div>
 
-    <!-- SEMI (esquerda) -->
+    <!-- SEMI esquerda: França vs Espanha -->
     <div class="bracket-col">
-      <div class="bracket-col-title">SEMI</div>
-      <div style="height:28px"></div>
+      <div class="bracket-col-title">🏅 SEMI</div>
+      <div style="height:24px"></div>
+      ${sf0label}
       ${bMatch(BRACKET.sf[0])}
     </div>
 
-    <!-- FINAL -->
+    <!-- FINAL central -->
     <div class="bracket-final">
       <div class="final-trophy">🏆</div>
       <div class="final-label">FINAL</div>
-      <div class="final-date">19 Jul · 20h PT</div>
+      <div class="final-date">19 Jul · 20h PT · MetLife NJ</div>
       <div class="b-match final-match">
         <div class="b-team ${R[104]&&R[104].h>R[104].a?'winner':''}">
           <span class="bf">${BRACKET.fi.h.f}</span>
@@ -927,29 +941,30 @@ function renderBracket(){
           <span class="bs">${R[104]&&R[104].a!==undefined?R[104].a:'–'}</span>
         </div>
       </div>
-      <div style="margin-top:16px;text-align:center">
-        <div style="font-size:10px;color:var(--mu);letter-spacing:1px;margin-bottom:6px">3º LUGAR</div>
-        <div style="font-size:10px;color:#444">18 Jul · 22h PT · Miami</div>
-        <div class="b-match" style="margin:4px 0 0">
-          <div class="b-team"><span class="bf">${BRACKET.tpl.h.f}</span><span class="bn">${BRACKET.tpl.h.n}</span><span class="bs">–</span></div>
-          <div class="b-team"><span class="bf">${BRACKET.tpl.a.f}</span><span class="bn">${BRACKET.tpl.a.n}</span><span class="bs">–</span></div>
+      <div style="margin-top:20px;text-align:center">
+        <div style="font-size:10px;color:var(--mu);letter-spacing:1px;margin-bottom:4px">🥉 3º LUGAR</div>
+        <div style="font-size:10px;color:#444;margin-bottom:6px">18 Jul · 22h PT · Miami</div>
+        <div class="b-match" style="margin:0">
+          <div class="b-team"><span class="bf">${BRACKET.tpl.h.f}</span><span class="bn">${BRACKET.tpl.h.n}</span><span class="bs">${R[103]?R[103].h:'–'}</span></div>
+          <div class="b-team"><span class="bf">${BRACKET.tpl.a.f}</span><span class="bn">${BRACKET.tpl.a.n}</span><span class="bs">${R[103]?R[103].a:'–'}</span></div>
         </div>
       </div>
     </div>
 
-    <!-- SEMI (direita) -->
+    <!-- SEMI direita: Inglaterra vs Argentina -->
     <div class="bracket-col">
-      <div class="bracket-col-title">SEMI</div>
-      <div style="height:28px"></div>
+      <div class="bracket-col-title">🏅 SEMI</div>
+      <div style="height:24px"></div>
+      ${sf1label}
       ${bMatch(BRACKET.sf[1])}
     </div>
 
-    <!-- QUARTAS (direita) -->
+    <!-- QUARTAS direita: Noruega×Inglaterra | Argentina×Suíça -->
     <div class="bracket-col">
-      <div class="bracket-col-title">QUARTAS</div>
-      ${bMatch(BRACKET.qf[2],' ')}
-      <div style="height:20px"></div>
-      ${bMatch(BRACKET.qf[3],' ')}
+      <div class="bracket-col-title">⚽ QUARTAS</div>
+      ${bMatch(BRACKET.qf[2])}
+      <div style="height:16px"></div>
+      ${bMatch(BRACKET.qf[3])}
     </div>
 
   </div>`;
