@@ -441,8 +441,8 @@ const M=[
   {id:101,d:"2026-07-14",t:"20:00",g:"Semi",     h:"França",      hf:"🇫🇷",a:"Espanha",          af:"🇪🇸",v:"Dallas",          p:"M"},
   {id:102,d:"2026-07-15",t:"20:00",g:"Semi",     h:"Inglaterra",  hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",a:"Argentina",       af:"🇦🇷",v:"Atlanta",         p:"M"},
   // ── 3º LUGAR + FINAL — hora Portugal ─────────────────────────────
-  {id:103,d:"2026-07-18",t:"22:00",g:"3.Lugar",  h:"A definir",hf:"🥉",a:"A definir",af:"🥉",v:"Miami",          p:"M"},
-  {id:104,d:"2026-07-19",t:"20:00",g:"FINAL",    h:"A definir",hf:"🏆",a:"A definir",af:"🏆",v:"MetLife NJ",     p:"M"},
+  {id:103,d:"2026-07-18",t:"22:00",g:"3.Lugar",  h:"França",      hf:"🇫🇷",a:"Inglaterra",       af:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",v:"Miami",          p:"M"},
+  {id:104,d:"2026-07-19",t:"20:00",g:"FINAL",    h:"Espanha",     hf:"🇪🇸",a:"Argentina",        af:"🇦🇷",v:"MetLife NJ",     p:"M"},
 ];
 
 /* Resultados hardcoded — openfootball verificado 12/07/2026 */
@@ -514,6 +514,9 @@ const HC={
   99:{h:2,a:1,s:'fim'},  // Espanha 2-1 Bélgica
   98:{h:1,a:2,s:'fim'},  // Noruega 1-2 Inglaterra (prorrogação)
   100:{h:3,a:1,s:'fim'}, // Argentina 3-1 Suíça (prorrogação)
+  // ── Semifinais
+  101:{h:0,a:2,s:'fim'}, // França 0-2 Espanha
+  102:{h:1,a:2,s:'fim'}, // Inglaterra 1-2 Argentina
 };
 
 let R={...HC}, FILT='all', tmr=null;
@@ -847,13 +850,13 @@ const BRACKET = {
   ],
   // Semifinais
   sf: [
-    {id:101, date:'14 Jul 20h', h:{f:'🇫🇷',n:'França',     s:null,w:null}, a:{f:'🇪🇸',n:'Espanha',   s:null,w:null}},
-    {id:102, date:'15 Jul 20h', h:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:null,w:null}, a:{f:'🇦🇷',n:'Argentina', s:null,w:null}},
+    {id:101, date:'14 Jul 20h', h:{f:'🇫🇷',n:'França',     s:0,w:false}, a:{f:'🇪🇸',n:'Espanha',   s:2,w:true}},
+    {id:102, date:'15 Jul 20h', h:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:1,w:false}, a:{f:'🇦🇷',n:'Argentina', s:2,w:true}},
   ],
   // Final
-  fi: {id:104, date:'19 Jul 20h', h:{f:'⚽',n:'A definir',s:null}, a:{f:'⚽',n:'A definir',s:null}},
+  fi: {id:104, date:'19 Jul 20h', h:{f:'🇪🇸',n:'Espanha',  s:null}, a:{f:'🇦🇷',n:'Argentina',s:null}},
   // 3º Lugar
-  tpl: {id:103, date:'18 Jul 22h', h:{f:'⚽',n:'A definir',s:null}, a:{f:'⚽',n:'A definir',s:null}},
+  tpl: {id:103, date:'18 Jul 22h', h:{f:'🇫🇷',n:'França',  s:null}, a:{f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',n:'Inglaterra',s:null}},
 };
 
 function bTeam(t, isPen){
